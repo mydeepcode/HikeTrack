@@ -1,0 +1,3357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HikeTrack - Know Your Worth</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #17131f;
+            --bg-card: #231a2e;
+            --bg-card-hover: #2d2340;
+            --accent-primary: #ff8a5b;
+            --accent-secondary: #f9c74f;
+            --accent-success: #7bd88f;
+            --accent-warning: #ffd166;
+            --accent-danger: #ff6b6b;
+            --text-primary: #f7f2ff;
+            --text-secondary: #d8cde8;
+            --text-muted: #a797be;
+            --border: #3a2d4f;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 138, 91, 0.09) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(249, 199, 79, 0.08) 0%, transparent 50%);
+        }
+
+        html, body, #root {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            min-width: 0;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .field-helper {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.375rem;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-container:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: 500;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 0.875rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            margin-top: 1rem;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--accent-danger);
+            color: var(--accent-danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        input, select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.875rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(255, 138, 91, 0.18);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 0.25rem;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 0.625rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+        }
+
+        .skills-panel {
+            background: rgba(23, 19, 31, 0.45);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .skills-toolbar-simple {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0.9rem;
+        }
+
+        .skills-toolbar-simple select {
+            height: 42px;
+        }
+
+        .btn-skill-add,
+        .btn-skill-clear {
+            border: 1px solid var(--border);
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+        }
+
+        .btn-skill-add {
+            background: rgba(255, 138, 91, 0.18);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-skill-add:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .btn-skill-add:not(:disabled):hover,
+        .btn-skill-clear:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .skills-selected-count-line {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .skills-selected-wrap {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            min-height: 44px;
+        }
+
+        .selected-skill-chip {
+            padding: 0.45rem 0.7rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+        }
+
+        .selected-skill-chip:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .skills-empty {
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1.125rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 138, 91, 0.32);
+        }
+
+        .btn-secondary {
+            padding: 0.875rem 1.5rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .score-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .score-circle {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 1rem;
+        }
+
+        .score-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .score-status {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .score-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .comparison-bar {
+            position: relative;
+            height: 60px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .bar-segment {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+
+        .hike-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .hike-option {
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .hike-option:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .hike-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hike-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.25rem;
+        }
+
+        .hike-amount {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(255, 138, 91, 0.14);
+            border-color: var(--accent-primary);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-success);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--accent-warning);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--accent-danger);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1.5rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .underpaid { color: var(--accent-danger); }
+        .fair { color: var(--accent-success); }
+        .overpaid { color: var(--accent-primary); }
+
+        .score-explainer {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .score-explainer-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .score-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .score-item-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .score-item-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-share {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            margin-top: 1rem;
+        }
+
+        .btn-share:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(18, 14, 26, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .share-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .share-close {
+            float: right;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .share-content {
+            background: var(--bg-dark);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .btn-copy {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--accent-primary);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-dark);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+        }
+
+        .data-source {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .conversation-channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+            gap: 0.8rem;
+            margin: 1.25rem 0;
+        }
+
+        .channel-button {
+            padding: 0.9rem 0.5rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .channel-button:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .channel-button.selected {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(255, 138, 91, 0.2), rgba(249, 199, 79, 0.2));
+        }
+
+        .channel-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.7px;
+            color: var(--accent-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .channel-label {
+            font-size: 0.86rem;
+            line-height: 1.2;
+            font-weight: 600;
+        }
+
+        .conversation-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tone-toggle-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .tone-btn {
+            border: 1px solid var(--border);
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            padding: 0.6rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .tone-btn.active {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            background: rgba(255, 138, 91, 0.12);
+        }
+
+        .conversation-generate-btn {
+            width: 100%;
+            padding: 0.95rem;
+            margin-top: 0.6rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .conversation-generate-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .conversation-generate-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 138, 91, 0.3);
+        }
+
+        .conversation-section {
+            margin: 1.25rem 0;
+            padding: 1.1rem;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .conversation-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.9rem;
+            color: var(--accent-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .script-option {
+            padding: 0.9rem;
+            margin: 0.55rem 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .script-option:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(3px);
+        }
+
+        .talking-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.7rem;
+            margin: 0.45rem 0;
+            background: var(--bg-card);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        .talking-point::before {
+            content: '+';
+            color: var(--accent-success);
+            font-weight: 700;
+            font-size: 1.05rem;
+            line-height: 1.2;
+        }
+
+        .ask-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .ask-option {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            position: relative;
+        }
+
+        .ask-option.recommended {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(255, 138, 91, 0.1), rgba(249, 199, 79, 0.1));
+        }
+
+        .ask-option.recommended::after {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: -10px;
+            right: 8px;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.2rem 0.55rem;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .ask-title {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .ask-percent {
+            font-size: 1.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .ask-amount {
+            font-size: 0.87rem;
+            color: var(--text-secondary);
+        }
+
+        .objection-handler {
+            margin: 0.7rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .objection-header {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border: none;
+            text-align: left;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .objection-content {
+            padding: 0.9rem;
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .guide-meta {
+            color: var(--text-muted);
+            font-size: 0.84rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .conversation-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.7rem;
+            margin-top: 1rem;
+        }
+
+        .copy-script-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .copy-script-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 138, 91, 0.3);
+        }
+
+        .tagline,
+        .field-helper,
+        .stat-value,
+        .score-description,
+        .hike-amount {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .card {
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .card-title::before {
+                height: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .stat-card {
+                padding: 1.1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+                overflow-wrap: anywhere;
+            }
+
+            .score-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .score-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .score-number {
+                font-size: 2.5rem;
+            }
+
+            .score-status {
+                font-size: 1.05rem;
+            }
+
+            .score-item {
+                align-items: flex-start;
+                gap: 0.5rem;
+                flex-direction: column;
+            }
+
+            .hike-options {
+                grid-template-columns: 1fr;
+            }
+
+            .conversation-channel-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .conversation-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-toolbar-simple {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-skill-add,
+            .btn-skill-clear {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hike-option {
+                padding: 1.1rem;
+            }
+
+            .hike-value {
+                font-size: 1.6rem;
+            }
+
+            .comparison-bar {
+                height: auto;
+                min-height: 60px;
+            }
+
+            .bar-segment {
+                font-size: 0.78rem;
+                padding: 0 0.5rem;
+            }
+
+            .chart-container {
+                height: 240px;
+            }
+
+            .share-card {
+                padding: 1.25rem;
+            }
+
+            .share-content {
+                padding: 1rem;
+                font-size: 0.82rem;
+                line-height: 1.6;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            .logo {
+                font-size: 1.75rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .btn-primary {
+                font-size: 0.95rem;
+                letter-spacing: 0.5px;
+                padding: 0.95rem;
+            }
+
+            .skills-panel {
+                padding: 0.8rem;
+            }
+
+            .conversation-section {
+                padding: 0.9rem;
+            }
+
+            .selected-skill-chip {
+                font-size: 0.82rem;
+                padding: 0.5rem 0.65rem;
+            }
+
+            .score-circle {
+                width: 130px;
+                height: 130px;
+            }
+
+            .score-number {
+                font-size: 2.1rem;
+            }
+
+            .chart-container {
+                height: 210px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Market salary data by region (all in yearly base currency)
+        // Roles are mapped to salary bands based on market research
+        const MARKET_DATA = {
+            'India': {
+                // Data & Analytics
+                'Data Analyst': {
+                    '0-2': { min: 400000, max: 700000 },
+                    '3-5': { min: 800000, max: 1400000 },
+                    '6+': { min: 1500000, max: 2500000 }
+                },
+                'Business Analyst': {
+                    '0-2': { min: 450000, max: 750000 },
+                    '3-5': { min: 850000, max: 1450000 },
+                    '6+': { min: 1550000, max: 2600000 }
+                },
+                'BI Engineer (Power BI / Tableau / Looker)': {
+                    '0-2': { min: 500000, max: 800000 },
+                    '3-5': { min: 900000, max: 1500000 },
+                    '6+': { min: 1600000, max: 2600000 }
+                },
+                'Analytics Engineer': {
+                    '0-2': { min: 550000, max: 900000 },
+                    '3-5': { min: 1000000, max: 1600000 },
+                    '6+': { min: 1700000, max: 2800000 }
+                },
+                'Reporting Analyst': {
+                    '0-2': { min: 380000, max: 650000 },
+                    '3-5': { min: 750000, max: 1300000 },
+                    '6+': { min: 1400000, max: 2300000 }
+                },
+                'MIS / Operations Analyst': {
+                    '0-2': { min: 400000, max: 700000 },
+                    '3-5': { min: 800000, max: 1350000 },
+                    '6+': { min: 1450000, max: 2400000 }
+                },
+                // Data Engineering
+                'Data Engineer': {
+                    '0-2': { min: 600000, max: 1000000 },
+                    '3-5': { min: 1100000, max: 1800000 },
+                    '6+': { min: 1800000, max: 3000000 }
+                },
+                'Big Data Engineer': {
+                    '0-2': { min: 650000, max: 1100000 },
+                    '3-5': { min: 1200000, max: 1900000 },
+                    '6+': { min: 1900000, max: 3200000 }
+                },
+                'ETL Engineer': {
+                    '0-2': { min: 550000, max: 950000 },
+                    '3-5': { min: 1050000, max: 1750000 },
+                    '6+': { min: 1750000, max: 2900000 }
+                },
+                'Data Platform Engineer': {
+                    '0-2': { min: 650000, max: 1100000 },
+                    '3-5': { min: 1200000, max: 1950000 },
+                    '6+': { min: 1950000, max: 3200000 }
+                },
+                'Cloud Data Engineer': {
+                    '0-2': { min: 700000, max: 1150000 },
+                    '3-5': { min: 1250000, max: 2000000 },
+                    '6+': { min: 2000000, max: 3300000 }
+                },
+                // Software & Tech
+                'Software Engineer': {
+                    '0-2': { min: 500000, max: 900000 },
+                    '3-5': { min: 1000000, max: 1800000 },
+                    '6+': { min: 1800000, max: 3500000 }
+                },
+                'Backend Engineer': {
+                    '0-2': { min: 550000, max: 950000 },
+                    '3-5': { min: 1050000, max: 1850000 },
+                    '6+': { min: 1850000, max: 3600000 }
+                },
+                'Full Stack Engineer': {
+                    '0-2': { min: 600000, max: 1000000 },
+                    '3-5': { min: 1100000, max: 1900000 },
+                    '6+': { min: 1900000, max: 3700000 }
+                },
+                'Frontend Engineer': {
+                    '0-2': { min: 500000, max: 900000 },
+                    '3-5': { min: 1000000, max: 1750000 },
+                    '6+': { min: 1750000, max: 3400000 }
+                },
+                'Platform Engineer': {
+                    '0-2': { min: 650000, max: 1100000 },
+                    '3-5': { min: 1200000, max: 2000000 },
+                    '6+': { min: 2000000, max: 3800000 }
+                },
+                // Machine Learning & AI
+                'ML Engineer': {
+                    '0-2': { min: 700000, max: 1100000 },
+                    '3-5': { min: 1200000, max: 2000000 },
+                    '6+': { min: 2000000, max: 3800000 }
+                },
+                'Data Scientist': {
+                    '0-2': { min: 650000, max: 1050000 },
+                    '3-5': { min: 1150000, max: 1950000 },
+                    '6+': { min: 1950000, max: 3700000 }
+                },
+                'Applied Scientist': {
+                    '0-2': { min: 750000, max: 1200000 },
+                    '3-5': { min: 1300000, max: 2100000 },
+                    '6+': { min: 2100000, max: 4000000 }
+                },
+                'AI Engineer': {
+                    '0-2': { min: 700000, max: 1150000 },
+                    '3-5': { min: 1250000, max: 2050000 },
+                    '6+': { min: 2050000, max: 3900000 }
+                },
+                // Cloud & Infrastructure
+                'Cloud Engineer': {
+                    '0-2': { min: 600000, max: 1000000 },
+                    '3-5': { min: 1100000, max: 1850000 },
+                    '6+': { min: 1850000, max: 3400000 }
+                },
+                'DevOps Engineer': {
+                    '0-2': { min: 550000, max: 950000 },
+                    '3-5': { min: 1050000, max: 1800000 },
+                    '6+': { min: 1800000, max: 3300000 }
+                },
+                'Site Reliability Engineer (SRE)': {
+                    '0-2': { min: 650000, max: 1100000 },
+                    '3-5': { min: 1200000, max: 2000000 },
+                    '6+': { min: 2000000, max: 3700000 }
+                },
+                // Management & Leadership
+                'Analytics Manager': {
+                    '0-2': { min: 1200000, max: 1800000 },
+                    '3-5': { min: 1800000, max: 2800000 },
+                    '6+': { min: 2800000, max: 4500000 }
+                },
+                'Engineering Manager': {
+                    '0-2': { min: 1500000, max: 2200000 },
+                    '3-5': { min: 2200000, max: 3500000 },
+                    '6+': { min: 3500000, max: 5500000 }
+                },
+                'Tech Lead': {
+                    '0-2': { min: 1300000, max: 2000000 },
+                    '3-5': { min: 2000000, max: 3200000 },
+                    '6+': { min: 3200000, max: 5000000 }
+                },
+                'Data Lead': {
+                    '0-2': { min: 1200000, max: 1900000 },
+                    '3-5': { min: 1900000, max: 3000000 },
+                    '6+': { min: 3000000, max: 4800000 }
+                },
+                // Other Tech Roles
+                'Technical Consultant': {
+                    '0-2': { min: 600000, max: 1000000 },
+                    '3-5': { min: 1100000, max: 1850000 },
+                    '6+': { min: 1850000, max: 3200000 }
+                },
+                'Solutions Engineer': {
+                    '0-2': { min: 650000, max: 1050000 },
+                    '3-5': { min: 1150000, max: 1900000 },
+                    '6+': { min: 1900000, max: 3300000 }
+                },
+                'Technical Specialist': {
+                    '0-2': { min: 550000, max: 950000 },
+                    '3-5': { min: 1050000, max: 1750000 },
+                    '6+': { min: 1750000, max: 3000000 }
+                },
+                'Other (General Tech Role)': {
+                    '0-2': { min: 500000, max: 900000 },
+                    '3-5': { min: 1000000, max: 1700000 },
+                    '6+': { min: 1700000, max: 3000000 }
+                }
+            },
+            'USA': {
+                // Data & Analytics
+                'Data Analyst': {
+                    '0-2': { min: 55000, max: 75000 },
+                    '3-5': { min: 75000, max: 110000 },
+                    '6+': { min: 110000, max: 150000 }
+                },
+                'Business Analyst': {
+                    '0-2': { min: 58000, max: 78000 },
+                    '3-5': { min: 78000, max: 115000 },
+                    '6+': { min: 115000, max: 155000 }
+                },
+                'BI Engineer (Power BI / Tableau / Looker)': {
+                    '0-2': { min: 65000, max: 85000 },
+                    '3-5': { min: 85000, max: 120000 },
+                    '6+': { min: 120000, max: 165000 }
+                },
+                'Analytics Engineer': {
+                    '0-2': { min: 70000, max: 95000 },
+                    '3-5': { min: 95000, max: 130000 },
+                    '6+': { min: 130000, max: 180000 }
+                },
+                'Reporting Analyst': {
+                    '0-2': { min: 52000, max: 72000 },
+                    '3-5': { min: 72000, max: 105000 },
+                    '6+': { min: 105000, max: 145000 }
+                },
+                'MIS / Operations Analyst': {
+                    '0-2': { min: 55000, max: 75000 },
+                    '3-5': { min: 75000, max: 110000 },
+                    '6+': { min: 110000, max: 150000 }
+                },
+                // Data Engineering
+                'Data Engineer': {
+                    '0-2': { min: 75000, max: 100000 },
+                    '3-5': { min: 100000, max: 140000 },
+                    '6+': { min: 140000, max: 190000 }
+                },
+                'Big Data Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 150000 },
+                    '6+': { min: 150000, max: 205000 }
+                },
+                'ETL Engineer': {
+                    '0-2': { min: 70000, max: 95000 },
+                    '3-5': { min: 95000, max: 135000 },
+                    '6+': { min: 135000, max: 185000 }
+                },
+                'Data Platform Engineer': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 155000 },
+                    '6+': { min: 155000, max: 210000 }
+                },
+                'Cloud Data Engineer': {
+                    '0-2': { min: 90000, max: 120000 },
+                    '3-5': { min: 120000, max: 160000 },
+                    '6+': { min: 160000, max: 220000 }
+                },
+                // Software & Tech
+                'Software Engineer': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 150000 },
+                    '6+': { min: 150000, max: 220000 }
+                },
+                'Backend Engineer': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 155000 },
+                    '6+': { min: 155000, max: 230000 }
+                },
+                'Full Stack Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 160000 },
+                    '6+': { min: 160000, max: 240000 }
+                },
+                'Frontend Engineer': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 145000 },
+                    '6+': { min: 145000, max: 210000 }
+                },
+                'Platform Engineer': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 165000 },
+                    '6+': { min: 165000, max: 245000 }
+                },
+                // Machine Learning & AI
+                'ML Engineer': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 160000 },
+                    '6+': { min: 160000, max: 240000 }
+                },
+                'Data Scientist': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 155000 },
+                    '6+': { min: 155000, max: 230000 }
+                },
+                'Applied Scientist': {
+                    '0-2': { min: 95000, max: 130000 },
+                    '3-5': { min: 130000, max: 180000 },
+                    '6+': { min: 180000, max: 260000 }
+                },
+                'AI Engineer': {
+                    '0-2': { min: 90000, max: 120000 },
+                    '3-5': { min: 120000, max: 165000 },
+                    '6+': { min: 165000, max: 250000 }
+                },
+                // Cloud & Infrastructure
+                'Cloud Engineer': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 150000 },
+                    '6+': { min: 150000, max: 220000 }
+                },
+                'DevOps Engineer': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 145000 },
+                    '6+': { min: 145000, max: 210000 }
+                },
+                'Site Reliability Engineer (SRE)': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 160000 },
+                    '6+': { min: 160000, max: 235000 }
+                },
+                // Management & Leadership
+                'Analytics Manager': {
+                    '0-2': { min: 110000, max: 150000 },
+                    '3-5': { min: 150000, max: 200000 },
+                    '6+': { min: 200000, max: 280000 }
+                },
+                'Engineering Manager': {
+                    '0-2': { min: 130000, max: 170000 },
+                    '3-5': { min: 170000, max: 230000 },
+                    '6+': { min: 230000, max: 320000 }
+                },
+                'Tech Lead': {
+                    '0-2': { min: 120000, max: 160000 },
+                    '3-5': { min: 160000, max: 215000 },
+                    '6+': { min: 215000, max: 300000 }
+                },
+                'Data Lead': {
+                    '0-2': { min: 115000, max: 155000 },
+                    '3-5': { min: 155000, max: 205000 },
+                    '6+': { min: 205000, max: 290000 }
+                },
+                // Other Tech Roles
+                'Technical Consultant': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 150000 },
+                    '6+': { min: 150000, max: 215000 }
+                },
+                'Solutions Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 155000 },
+                    '6+': { min: 155000, max: 225000 }
+                },
+                'Technical Specialist': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 145000 },
+                    '6+': { min: 145000, max: 205000 }
+                },
+                'Other (General Tech Role)': {
+                    '0-2': { min: 65000, max: 95000 },
+                    '3-5': { min: 95000, max: 140000 },
+                    '6+': { min: 140000, max: 200000 }
+                }
+            },
+            'UK': {
+                // Data & Analytics
+                'Data Analyst': {
+                    '0-2': { min: 30000, max: 42000 },
+                    '3-5': { min: 42000, max: 60000 },
+                    '6+': { min: 60000, max: 85000 }
+                },
+                'Business Analyst': {
+                    '0-2': { min: 32000, max: 45000 },
+                    '3-5': { min: 45000, max: 63000 },
+                    '6+': { min: 63000, max: 88000 }
+                },
+                'BI Engineer (Power BI / Tableau / Looker)': {
+                    '0-2': { min: 35000, max: 48000 },
+                    '3-5': { min: 48000, max: 65000 },
+                    '6+': { min: 65000, max: 90000 }
+                },
+                'Analytics Engineer': {
+                    '0-2': { min: 38000, max: 52000 },
+                    '3-5': { min: 52000, max: 70000 },
+                    '6+': { min: 70000, max: 95000 }
+                },
+                'Reporting Analyst': {
+                    '0-2': { min: 28000, max: 40000 },
+                    '3-5': { min: 40000, max: 57000 },
+                    '6+': { min: 57000, max: 80000 }
+                },
+                'MIS / Operations Analyst': {
+                    '0-2': { min: 30000, max: 42000 },
+                    '3-5': { min: 42000, max: 60000 },
+                    '6+': { min: 60000, max: 83000 }
+                },
+                // Data Engineering
+                'Data Engineer': {
+                    '0-2': { min: 40000, max: 55000 },
+                    '3-5': { min: 55000, max: 75000 },
+                    '6+': { min: 75000, max: 105000 }
+                },
+                'Big Data Engineer': {
+                    '0-2': { min: 43000, max: 58000 },
+                    '3-5': { min: 58000, max: 80000 },
+                    '6+': { min: 80000, max: 112000 }
+                },
+                'ETL Engineer': {
+                    '0-2': { min: 38000, max: 52000 },
+                    '3-5': { min: 52000, max: 72000 },
+                    '6+': { min: 72000, max: 100000 }
+                },
+                'Data Platform Engineer': {
+                    '0-2': { min: 45000, max: 60000 },
+                    '3-5': { min: 60000, max: 82000 },
+                    '6+': { min: 82000, max: 115000 }
+                },
+                'Cloud Data Engineer': {
+                    '0-2': { min: 48000, max: 63000 },
+                    '3-5': { min: 63000, max: 85000 },
+                    '6+': { min: 85000, max: 120000 }
+                },
+                // Software & Tech
+                'Software Engineer': {
+                    '0-2': { min: 35000, max: 55000 },
+                    '3-5': { min: 55000, max: 80000 },
+                    '6+': { min: 80000, max: 120000 }
+                },
+                'Backend Engineer': {
+                    '0-2': { min: 40000, max: 58000 },
+                    '3-5': { min: 58000, max: 83000 },
+                    '6+': { min: 83000, max: 125000 }
+                },
+                'Full Stack Engineer': {
+                    '0-2': { min: 43000, max: 60000 },
+                    '3-5': { min: 60000, max: 85000 },
+                    '6+': { min: 85000, max: 130000 }
+                },
+                'Frontend Engineer': {
+                    '0-2': { min: 38000, max: 55000 },
+                    '3-5': { min: 55000, max: 78000 },
+                    '6+': { min: 78000, max: 115000 }
+                },
+                'Platform Engineer': {
+                    '0-2': { min: 45000, max: 62000 },
+                    '3-5': { min: 62000, max: 88000 },
+                    '6+': { min: 88000, max: 135000 }
+                },
+                // Machine Learning & AI
+                'ML Engineer': {
+                    '0-2': { min: 45000, max: 60000 },
+                    '3-5': { min: 60000, max: 85000 },
+                    '6+': { min: 85000, max: 130000 }
+                },
+                'Data Scientist': {
+                    '0-2': { min: 43000, max: 58000 },
+                    '3-5': { min: 58000, max: 82000 },
+                    '6+': { min: 82000, max: 125000 }
+                },
+                'Applied Scientist': {
+                    '0-2': { min: 50000, max: 68000 },
+                    '3-5': { min: 68000, max: 95000 },
+                    '6+': { min: 95000, max: 145000 }
+                },
+                'AI Engineer': {
+                    '0-2': { min: 48000, max: 63000 },
+                    '3-5': { min: 63000, max: 88000 },
+                    '6+': { min: 88000, max: 138000 }
+                },
+                // Cloud & Infrastructure
+                'Cloud Engineer': {
+                    '0-2': { min: 40000, max: 57000 },
+                    '3-5': { min: 57000, max: 80000 },
+                    '6+': { min: 80000, max: 120000 }
+                },
+                'DevOps Engineer': {
+                    '0-2': { min: 38000, max: 55000 },
+                    '3-5': { min: 55000, max: 78000 },
+                    '6+': { min: 78000, max: 115000 }
+                },
+                'Site Reliability Engineer (SRE)': {
+                    '0-2': { min: 45000, max: 62000 },
+                    '3-5': { min: 62000, max: 85000 },
+                    '6+': { min: 85000, max: 128000 }
+                },
+                // Management & Leadership
+                'Analytics Manager': {
+                    '0-2': { min: 60000, max: 80000 },
+                    '3-5': { min: 80000, max: 110000 },
+                    '6+': { min: 110000, max: 155000 }
+                },
+                'Engineering Manager': {
+                    '0-2': { min: 70000, max: 95000 },
+                    '3-5': { min: 95000, max: 130000 },
+                    '6+': { min: 130000, max: 180000 }
+                },
+                'Tech Lead': {
+                    '0-2': { min: 65000, max: 88000 },
+                    '3-5': { min: 88000, max: 120000 },
+                    '6+': { min: 120000, max: 170000 }
+                },
+                'Data Lead': {
+                    '0-2': { min: 62000, max: 85000 },
+                    '3-5': { min: 85000, max: 115000 },
+                    '6+': { min: 115000, max: 160000 }
+                },
+                // Other Tech Roles
+                'Technical Consultant': {
+                    '0-2': { min: 40000, max: 57000 },
+                    '3-5': { min: 57000, max: 80000 },
+                    '6+': { min: 80000, max: 118000 }
+                },
+                'Solutions Engineer': {
+                    '0-2': { min: 43000, max: 60000 },
+                    '3-5': { min: 60000, max: 83000 },
+                    '6+': { min: 83000, max: 123000 }
+                },
+                'Technical Specialist': {
+                    '0-2': { min: 38000, max: 55000 },
+                    '3-5': { min: 55000, max: 78000 },
+                    '6+': { min: 78000, max: 113000 }
+                },
+                'Other (General Tech Role)': {
+                    '0-2': { min: 35000, max: 52000 },
+                    '3-5': { min: 52000, max: 75000 },
+                    '6+': { min: 75000, max: 110000 }
+                }
+            },
+            'Europe': {
+                // Data & Analytics
+                'Data Analyst': {
+                    '0-2': { min: 35000, max: 48000 },
+                    '3-5': { min: 48000, max: 68000 },
+                    '6+': { min: 68000, max: 95000 }
+                },
+                'Business Analyst': {
+                    '0-2': { min: 37000, max: 51000 },
+                    '3-5': { min: 51000, max: 71000 },
+                    '6+': { min: 71000, max: 98000 }
+                },
+                'BI Engineer (Power BI / Tableau / Looker)': {
+                    '0-2': { min: 40000, max: 55000 },
+                    '3-5': { min: 55000, max: 75000 },
+                    '6+': { min: 75000, max: 100000 }
+                },
+                'Analytics Engineer': {
+                    '0-2': { min: 42000, max: 58000 },
+                    '3-5': { min: 58000, max: 78000 },
+                    '6+': { min: 78000, max: 105000 }
+                },
+                'Reporting Analyst': {
+                    '0-2': { min: 33000, max: 46000 },
+                    '3-5': { min: 46000, max: 65000 },
+                    '6+': { min: 65000, max: 90000 }
+                },
+                'MIS / Operations Analyst': {
+                    '0-2': { min: 35000, max: 48000 },
+                    '3-5': { min: 48000, max: 68000 },
+                    '6+': { min: 68000, max: 93000 }
+                },
+                // Data Engineering
+                'Data Engineer': {
+                    '0-2': { min: 45000, max: 62000 },
+                    '3-5': { min: 62000, max: 85000 },
+                    '6+': { min: 85000, max: 115000 }
+                },
+                'Big Data Engineer': {
+                    '0-2': { min: 48000, max: 66000 },
+                    '3-5': { min: 66000, max: 90000 },
+                    '6+': { min: 90000, max: 123000 }
+                },
+                'ETL Engineer': {
+                    '0-2': { min: 43000, max: 59000 },
+                    '3-5': { min: 59000, max: 81000 },
+                    '6+': { min: 81000, max: 110000 }
+                },
+                'Data Platform Engineer': {
+                    '0-2': { min: 50000, max: 68000 },
+                    '3-5': { min: 68000, max: 92000 },
+                    '6+': { min: 92000, max: 125000 }
+                },
+                'Cloud Data Engineer': {
+                    '0-2': { min: 53000, max: 71000 },
+                    '3-5': { min: 71000, max: 95000 },
+                    '6+': { min: 95000, max: 130000 }
+                },
+                // Software & Tech
+                'Software Engineer': {
+                    '0-2': { min: 40000, max: 60000 },
+                    '3-5': { min: 60000, max: 90000 },
+                    '6+': { min: 90000, max: 130000 }
+                },
+                'Backend Engineer': {
+                    '0-2': { min: 45000, max: 65000 },
+                    '3-5': { min: 65000, max: 93000 },
+                    '6+': { min: 93000, max: 138000 }
+                },
+                'Full Stack Engineer': {
+                    '0-2': { min: 48000, max: 68000 },
+                    '3-5': { min: 68000, max: 95000 },
+                    '6+': { min: 95000, max: 143000 }
+                },
+                'Frontend Engineer': {
+                    '0-2': { min: 42000, max: 62000 },
+                    '3-5': { min: 62000, max: 88000 },
+                    '6+': { min: 88000, max: 128000 }
+                },
+                'Platform Engineer': {
+                    '0-2': { min: 50000, max: 70000 },
+                    '3-5': { min: 70000, max: 98000 },
+                    '6+': { min: 98000, max: 148000 }
+                },
+                // Machine Learning & AI
+                'ML Engineer': {
+                    '0-2': { min: 50000, max: 68000 },
+                    '3-5': { min: 68000, max: 95000 },
+                    '6+': { min: 95000, max: 145000 }
+                },
+                'Data Scientist': {
+                    '0-2': { min: 48000, max: 66000 },
+                    '3-5': { min: 66000, max: 92000 },
+                    '6+': { min: 92000, max: 138000 }
+                },
+                'Applied Scientist': {
+                    '0-2': { min: 55000, max: 75000 },
+                    '3-5': { min: 75000, max: 105000 },
+                    '6+': { min: 105000, max: 158000 }
+                },
+                'AI Engineer': {
+                    '0-2': { min: 53000, max: 71000 },
+                    '3-5': { min: 71000, max: 98000 },
+                    '6+': { min: 98000, max: 150000 }
+                },
+                // Cloud & Infrastructure
+                'Cloud Engineer': {
+                    '0-2': { min: 45000, max: 64000 },
+                    '3-5': { min: 64000, max: 90000 },
+                    '6+': { min: 90000, max: 133000 }
+                },
+                'DevOps Engineer': {
+                    '0-2': { min: 43000, max: 62000 },
+                    '3-5': { min: 62000, max: 88000 },
+                    '6+': { min: 88000, max: 128000 }
+                },
+                'Site Reliability Engineer (SRE)': {
+                    '0-2': { min: 50000, max: 70000 },
+                    '3-5': { min: 70000, max: 95000 },
+                    '6+': { min: 95000, max: 140000 }
+                },
+                // Management & Leadership
+                'Analytics Manager': {
+                    '0-2': { min: 68000, max: 90000 },
+                    '3-5': { min: 90000, max: 123000 },
+                    '6+': { min: 123000, max: 170000 }
+                },
+                'Engineering Manager': {
+                    '0-2': { min: 78000, max: 105000 },
+                    '3-5': { min: 105000, max: 145000 },
+                    '6+': { min: 145000, max: 200000 }
+                },
+                'Tech Lead': {
+                    '0-2': { min: 73000, max: 98000 },
+                    '3-5': { min: 98000, max: 133000 },
+                    '6+': { min: 133000, max: 185000 }
+                },
+                'Data Lead': {
+                    '0-2': { min: 70000, max: 95000 },
+                    '3-5': { min: 95000, max: 128000 },
+                    '6+': { min: 128000, max: 178000 }
+                },
+                // Other Tech Roles
+                'Technical Consultant': {
+                    '0-2': { min: 45000, max: 64000 },
+                    '3-5': { min: 64000, max: 90000 },
+                    '6+': { min: 90000, max: 130000 }
+                },
+                'Solutions Engineer': {
+                    '0-2': { min: 48000, max: 68000 },
+                    '3-5': { min: 68000, max: 93000 },
+                    '6+': { min: 93000, max: 135000 }
+                },
+                'Technical Specialist': {
+                    '0-2': { min: 43000, max: 62000 },
+                    '3-5': { min: 62000, max: 88000 },
+                    '6+': { min: 88000, max: 125000 }
+                },
+                'Other (General Tech Role)': {
+                    '0-2': { min: 40000, max: 58000 },
+                    '3-5': { min: 58000, max: 83000 },
+                    '6+': { min: 83000, max: 120000 }
+                }
+            },
+            'Remote': {
+                // Data & Analytics
+                'Data Analyst': {
+                    '0-2': { min: 50000, max: 70000 },
+                    '3-5': { min: 70000, max: 100000 },
+                    '6+': { min: 100000, max: 140000 }
+                },
+                'Business Analyst': {
+                    '0-2': { min: 53000, max: 73000 },
+                    '3-5': { min: 73000, max: 105000 },
+                    '6+': { min: 105000, max: 145000 }
+                },
+                'BI Engineer (Power BI / Tableau / Looker)': {
+                    '0-2': { min: 60000, max: 80000 },
+                    '3-5': { min: 80000, max: 110000 },
+                    '6+': { min: 110000, max: 150000 }
+                },
+                'Analytics Engineer': {
+                    '0-2': { min: 65000, max: 90000 },
+                    '3-5': { min: 90000, max: 120000 },
+                    '6+': { min: 120000, max: 165000 }
+                },
+                'Reporting Analyst': {
+                    '0-2': { min: 48000, max: 68000 },
+                    '3-5': { min: 68000, max: 95000 },
+                    '6+': { min: 95000, max: 135000 }
+                },
+                'MIS / Operations Analyst': {
+                    '0-2': { min: 50000, max: 70000 },
+                    '3-5': { min: 70000, max: 100000 },
+                    '6+': { min: 100000, max: 138000 }
+                },
+                // Data Engineering
+                'Data Engineer': {
+                    '0-2': { min: 70000, max: 95000 },
+                    '3-5': { min: 95000, max: 130000 },
+                    '6+': { min: 130000, max: 175000 }
+                },
+                'Big Data Engineer': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 140000 },
+                    '6+': { min: 140000, max: 190000 }
+                },
+                'ETL Engineer': {
+                    '0-2': { min: 65000, max: 90000 },
+                    '3-5': { min: 90000, max: 125000 },
+                    '6+': { min: 125000, max: 170000 }
+                },
+                'Data Platform Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 145000 },
+                    '6+': { min: 145000, max: 195000 }
+                },
+                'Cloud Data Engineer': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 150000 },
+                    '6+': { min: 150000, max: 205000 }
+                },
+                // Software & Tech
+                'Software Engineer': {
+                    '0-2': { min: 65000, max: 95000 },
+                    '3-5': { min: 95000, max: 140000 },
+                    '6+': { min: 140000, max: 200000 }
+                },
+                'Backend Engineer': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 145000 },
+                    '6+': { min: 145000, max: 210000 }
+                },
+                'Full Stack Engineer': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 150000 },
+                    '6+': { min: 150000, max: 220000 }
+                },
+                'Frontend Engineer': {
+                    '0-2': { min: 65000, max: 95000 },
+                    '3-5': { min: 95000, max: 135000 },
+                    '6+': { min: 135000, max: 195000 }
+                },
+                'Platform Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 155000 },
+                    '6+': { min: 155000, max: 225000 }
+                },
+                // Machine Learning & AI
+                'ML Engineer': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 150000 },
+                    '6+': { min: 150000, max: 220000 }
+                },
+                'Data Scientist': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 145000 },
+                    '6+': { min: 145000, max: 210000 }
+                },
+                'Applied Scientist': {
+                    '0-2': { min: 90000, max: 125000 },
+                    '3-5': { min: 125000, max: 170000 },
+                    '6+': { min: 170000, max: 245000 }
+                },
+                'AI Engineer': {
+                    '0-2': { min: 85000, max: 115000 },
+                    '3-5': { min: 115000, max: 155000 },
+                    '6+': { min: 155000, max: 230000 }
+                },
+                // Cloud & Infrastructure
+                'Cloud Engineer': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 140000 },
+                    '6+': { min: 140000, max: 200000 }
+                },
+                'DevOps Engineer': {
+                    '0-2': { min: 65000, max: 95000 },
+                    '3-5': { min: 95000, max: 135000 },
+                    '6+': { min: 135000, max: 195000 }
+                },
+                'Site Reliability Engineer (SRE)': {
+                    '0-2': { min: 80000, max: 110000 },
+                    '3-5': { min: 110000, max: 150000 },
+                    '6+': { min: 150000, max: 220000 }
+                },
+                // Management & Leadership
+                'Analytics Manager': {
+                    '0-2': { min: 100000, max: 140000 },
+                    '3-5': { min: 140000, max: 185000 },
+                    '6+': { min: 185000, max: 260000 }
+                },
+                'Engineering Manager': {
+                    '0-2': { min: 120000, max: 160000 },
+                    '3-5': { min: 160000, max: 215000 },
+                    '6+': { min: 215000, max: 300000 }
+                },
+                'Tech Lead': {
+                    '0-2': { min: 110000, max: 150000 },
+                    '3-5': { min: 150000, max: 200000 },
+                    '6+': { min: 200000, max: 280000 }
+                },
+                'Data Lead': {
+                    '0-2': { min: 105000, max: 145000 },
+                    '3-5': { min: 145000, max: 190000 },
+                    '6+': { min: 190000, max: 270000 }
+                },
+                // Other Tech Roles
+                'Technical Consultant': {
+                    '0-2': { min: 70000, max: 100000 },
+                    '3-5': { min: 100000, max: 140000 },
+                    '6+': { min: 140000, max: 200000 }
+                },
+                'Solutions Engineer': {
+                    '0-2': { min: 75000, max: 105000 },
+                    '3-5': { min: 105000, max: 145000 },
+                    '6+': { min: 145000, max: 210000 }
+                },
+                'Technical Specialist': {
+                    '0-2': { min: 65000, max: 95000 },
+                    '3-5': { min: 95000, max: 135000 },
+                    '6+': { min: 135000, max: 190000 }
+                },
+                'Other (General Tech Role)': {
+                    '0-2': { min: 60000, max: 90000 },
+                    '3-5': { min: 90000, max: 130000 },
+                    '6+': { min: 130000, max: 185000 }
+                }
+            }
+        };
+
+        const REGIONS = ['India', 'USA', 'UK', 'Europe', 'Remote'];
+        
+        const CURRENCY_CONFIG = {
+            'India': { symbol: '₹', code: 'INR', divisor: 100000, suffix: 'L' },
+            'USA': { symbol: '$', code: 'USD', divisor: 1000, suffix: 'K' },
+            'UK': { symbol: '£', code: 'GBP', divisor: 1000, suffix: 'K' },
+            'Europe': { symbol: '€', code: 'EUR', divisor: 1000, suffix: 'K' },
+            'Remote': { symbol: '$', code: 'USD', divisor: 1000, suffix: 'K' }
+        };
+
+        const SKILLS = [
+            'SQL', 'Python', 'Power BI', 'Tableau', 'Excel',
+            'AWS', 'Azure', 'Snowflake', 'Spark', 'Airflow',
+            'DBT', 'ETL', 'Machine Learning', 'Statistics', 'Git',
+            'Looker', 'Google Analytics', 'A/B Testing', 'Data Modeling', 'Data Visualization',
+            'Pandas', 'NumPy', 'Scikit-learn', 'TensorFlow', 'PyTorch',
+            'NLP', 'LLM Integration', 'MLOps', 'Feature Engineering', 'Experiment Tracking',
+            'Java', 'JavaScript', 'TypeScript', 'React', 'Node.js',
+            'REST APIs', 'GraphQL', 'System Design', 'Microservices', 'Docker',
+            'Kubernetes', 'CI/CD', 'Jenkins', 'Terraform', 'Linux',
+            'Bash/Shell', 'Kafka', 'Redis', 'PostgreSQL', 'MongoDB',
+            'LookML', 'Databricks', 'BigQuery', 'Leadership', 'Stakeholder Management'
+        ];
+
+        const SKILL_CATEGORIES = {
+            'Data & BI': [
+                'SQL', 'Excel', 'Power BI', 'Tableau', 'Looker', 'LookML',
+                'Google Analytics', 'A/B Testing', 'Data Modeling', 'Data Visualization', 'Statistics'
+            ],
+            'Data Engineering': [
+                'ETL', 'DBT', 'Spark', 'Airflow', 'Snowflake', 'Databricks', 'BigQuery', 'Kafka'
+            ],
+            'ML & AI': [
+                'Machine Learning', 'Pandas', 'NumPy', 'Scikit-learn', 'TensorFlow', 'PyTorch',
+                'NLP', 'LLM Integration', 'MLOps', 'Feature Engineering', 'Experiment Tracking'
+            ],
+            'Software Engineering': [
+                'Python', 'Java', 'JavaScript', 'TypeScript', 'React', 'Node.js',
+                'REST APIs', 'GraphQL', 'System Design', 'Microservices', 'Git'
+            ],
+            'Cloud & DevOps': [
+                'AWS', 'Azure', 'Docker', 'Kubernetes', 'CI/CD', 'Jenkins', 'Terraform', 'Linux', 'Bash/Shell'
+            ],
+            'Databases': [
+                'PostgreSQL', 'MongoDB', 'Redis'
+            ],
+            'Leadership & Product': [
+                'Leadership', 'Stakeholder Management'
+            ]
+        };
+
+        const ROLE_TO_SKILL_CATEGORIES = {
+            'Data & Analytics': ['Data & BI', 'Data Engineering', 'Leadership & Product'],
+            'Data Engineering': ['Data Engineering', 'Cloud & DevOps', 'Databases'],
+            'Software & Tech': ['Software Engineering', 'Cloud & DevOps', 'Databases'],
+            'Machine Learning & AI': ['ML & AI', 'Data Engineering', 'Software Engineering'],
+            'Cloud & Infrastructure': ['Cloud & DevOps', 'Software Engineering', 'Databases'],
+            'Management & Leadership': ['Leadership & Product', 'Data & BI', 'Software Engineering'],
+            'Other Tech Roles': ['Software Engineering', 'Cloud & DevOps', 'Data & BI']
+        };
+
+        // Comprehensive role taxonomy organized by category
+        const ROLE_CATEGORIES = {
+            'Data & Analytics': [
+                'Data Analyst',
+                'Business Analyst',
+                'BI Engineer (Power BI / Tableau / Looker)',
+                'Analytics Engineer',
+                'Reporting Analyst',
+                'MIS / Operations Analyst'
+            ],
+            'Data Engineering': [
+                'Data Engineer',
+                'Big Data Engineer',
+                'ETL Engineer',
+                'Data Platform Engineer',
+                'Cloud Data Engineer'
+            ],
+            'Software & Tech': [
+                'Software Engineer',
+                'Backend Engineer',
+                'Full Stack Engineer',
+                'Frontend Engineer',
+                'Platform Engineer'
+            ],
+            'Machine Learning & AI': [
+                'ML Engineer',
+                'Data Scientist',
+                'Applied Scientist',
+                'AI Engineer'
+            ],
+            'Cloud & Infrastructure': [
+                'Cloud Engineer',
+                'DevOps Engineer',
+                'Site Reliability Engineer (SRE)'
+            ],
+            'Management & Leadership': [
+                'Analytics Manager',
+                'Engineering Manager',
+                'Tech Lead',
+                'Data Lead'
+            ],
+            'Other Tech Roles': [
+                'Technical Consultant',
+                'Solutions Engineer',
+                'Technical Specialist',
+                'Other (General Tech Role)'
+            ]
+        };
+
+        // Flattened list for backward compatibility
+        const ROLES = Object.values(ROLE_CATEGORIES).flat();
+        
+        const COMPANY_TYPES = ['Startup', 'Product', 'Enterprise', 'Consulting', 'Remote'];
+
+        const CONVERSATION_CHANNELS = [
+            { id: 'phone', icon: 'CALL', label: 'Phone Call', style: 'live' },
+            { id: 'video', icon: 'VIDEO', label: 'Video Meeting', style: 'live' },
+            { id: 'email', icon: 'EMAIL', label: 'Email', style: 'written' },
+            { id: 'slack', icon: 'CHAT', label: 'Slack / Teams', style: 'written' },
+            { id: 'whatsapp', icon: 'MSG', label: 'WhatsApp', style: 'written' },
+            { id: 'linkedin', icon: 'IN', label: 'LinkedIn Message', style: 'written' },
+            { id: 'inperson', icon: 'MEET', label: 'In-Person Meeting', style: 'live' }
+        ];
+
+        const CONVERSATION_CONTEXTS = [
+            { id: 'firstTime', label: 'First-time salary discussion' },
+            { id: 'annualReview', label: 'Annual review meeting' },
+            { id: 'promotion', label: 'Promotion discussion' },
+            { id: 'counterOffer', label: 'Counter-offer situation' },
+            { id: 'followUpRejection', label: 'Follow-up after initial rejection' },
+            { id: 'coldOutreach', label: 'Cold outreach (no scheduled meeting)' }
+        ];
+
+        const OBJECTION_RESPONSES = {
+            budgetConstraints: {
+                title: 'Budget constraints',
+                responses: {
+                    professional: "I understand budget cycles are fixed. Could we align on a timeline and objective milestones for a phased adjustment?",
+                    friendly: "Totally understand budgets are tight. Can we map a realistic plan so this can move forward in the next cycle?",
+                    assertive: "I respect the budget limits, and I want to leave this conversation with a defined review date and measurable criteria.",
+                    collaborative: "Could we co-create a path with milestones and timing so this adjustment becomes actionable?"
+                }
+            },
+            notRightTime: {
+                title: 'Not the right time',
+                responses: {
+                    professional: "Understood. What would be the most appropriate review window, and what outcomes should I target before then?",
+                    friendly: "That makes sense. Can we set a follow-up date now so I can prepare with the right achievements?",
+                    assertive: "I am open to timing adjustments, but I would like a committed follow-up date and expectations.",
+                    collaborative: "Can we align on a clear check-in timeline and success metrics for the next discussion?"
+                }
+            },
+            alreadyFair: {
+                title: 'You are already paid fairly',
+                responses: {
+                    professional: "Thanks for sharing that view. I would like to compare it with current market benchmarks for my role and skill set.",
+                    friendly: "I appreciate that perspective. I can walk through the market data I gathered so we can review it together.",
+                    assertive: "I respect the internal benchmark, and external data shows a gap. I would like us to review both and close that gap.",
+                    collaborative: "Could we evaluate internal and external benchmarks side by side and agree on a fair midpoint?"
+                }
+            },
+            revisitLater: {
+                title: 'Let us revisit this later',
+                responses: {
+                    professional: "That works. Can we lock a date now and agree on the deliverables required for approval?",
+                    friendly: "Happy to revisit. Can we set a date now so I can prepare the right evidence?",
+                    assertive: "I am fine revisiting, but I would like a concrete date and criteria to avoid ambiguity.",
+                    collaborative: "Let us set a checkpoint with clear metrics so our next conversation is decision-ready."
+                }
+            },
+            needMorePerformance: {
+                title: 'Need more performance evidence',
+                responses: {
+                    professional: "Understood. Could you outline specific outcomes, scope, or impact levels expected for adjustment?",
+                    friendly: "Makes sense. If you share the exact goals, I can focus on them and come back with clear results.",
+                    assertive: "I am committed to delivering more. I would like explicit performance targets and a review date tied to those targets.",
+                    collaborative: "Can we define a measurable performance plan together and revisit compensation upon completion?"
+                }
+            }
+        };
+
+        function getConversationLabel(list, id) {
+            const match = list.find((item) => item.id === id);
+            return match ? match.label : '';
+        }
+
+        function generateConversationScript(channel, context, tone, formData, results, formatCurrency) {
+            const channelLabel = getConversationLabel(CONVERSATION_CHANNELS, channel);
+            const contextLabel = getConversationLabel(CONVERSATION_CONTEXTS, context);
+            const isWrittenChannel = ['email', 'slack', 'whatsapp', 'linkedin'].includes(channel);
+            const marketGapText = results.salaryDiff < 0
+                ? `${Math.abs(results.salaryDiff).toFixed(0)}% below market average`
+                : `${results.salaryDiff.toFixed(0)}% above market average`;
+            const timeSinceHikeText = results.neverReceivedHike ? 'never received a hike yet' : `${results.monthsSinceHike} months since my last hike`;
+            const skillListText = formData.skills.length > 0 ? formData.skills.slice(0, 8).join(', ') : 'role-specific capabilities relevant to team goals';
+            const tonePrefix = tone === 'friendly'
+                ? 'I appreciate your support so far'
+                : tone === 'assertive'
+                ? 'I want to discuss this directly and clearly'
+                : tone === 'collaborative'
+                ? 'I want us to find a fair path together'
+                : 'I would like to discuss compensation professionally';
+
+            const channelIntro = {
+                phone: 'on this call',
+                video: 'in this meeting',
+                email: 'through this email',
+                slack: 'in this message',
+                whatsapp: 'in this message',
+                linkedin: 'in this note',
+                inperson: 'in this discussion'
+            }[channel] || 'in this conversation';
+
+            const contextLine = {
+                firstTime: 'This is my first formal compensation discussion for this role.',
+                annualReview: 'Given the annual review cycle, this is the right time to align compensation with impact.',
+                promotion: 'As responsibilities have increased, I want to discuss compensation alignment with scope.',
+                counterOffer: 'I want to discuss an adjustment based on market benchmarks before considering external options.',
+                followUpRejection: 'Following our earlier discussion, I would like to revisit compensation with updated evidence.',
+                coldOutreach: 'I wanted to proactively request a compensation discussion based on recent outcomes.'
+            }[context] || '';
+
+            const openingLines = [
+                `${tonePrefix}. Thank you for taking time ${channelIntro}. ${contextLine}`,
+                `Thanks for the conversation ${channelIntro}. I prepared market and performance data so we can discuss my compensation objectively.`,
+                `I value the work we are doing, and I would like to review my current compensation against role expectations and market data.`,
+                `I want to keep this constructive and data-driven: role scope, market range, and results delivered.`
+            ];
+
+            const talkingPoints = [
+                `I have been working as ${formData.role} for ${formData.experience} years in ${formData.region}.`,
+                `My current salary is ${formatCurrency(results.currentSalaryYearly)} yearly and is currently ${marketGapText}.`,
+                `It has been ${timeSinceHikeText}.`,
+                `I have built skills in ${skillListText}.`,
+                `My HikeTrack readiness score is ${results.score}/100 (${results.score >= 70 ? 'strong position' : results.score >= 40 ? 'prepare to negotiate' : 'build case further'}).`
+            ];
+
+            const justification = [
+                `Market data: For ${formData.role} in ${formData.region}, the typical range is ${formatCurrency(results.marketRange.min)} to ${formatCurrency(results.marketRange.max)}.`,
+                `Skills and growth: I expanded into ${skillListText}, increasing my contribution capacity.`,
+                `Time factor: ${results.neverReceivedHike ? 'I have not received a salary adjustment in this role yet.' : `${results.monthsSinceHike} months have passed since my last adjustment.`}`,
+                `Performance: I am prepared to share quantifiable outcomes, project impact, and ownership areas from recent work.`
+            ];
+
+            const ask = {
+                conservative: {
+                    percent: results.hikeOptions.safe.percent,
+                    raise: formatCurrency(results.hikeOptions.safe.amount),
+                    newSalary: formatCurrency(results.currentSalaryYearly + results.hikeOptions.safe.amount)
+                },
+                recommended: {
+                    percent: results.hikeOptions.ideal.percent,
+                    raise: formatCurrency(results.hikeOptions.ideal.amount),
+                    newSalary: formatCurrency(results.currentSalaryYearly + results.hikeOptions.ideal.amount)
+                },
+                ambitious: {
+                    percent: results.hikeOptions.aggressive.percent,
+                    raise: formatCurrency(results.hikeOptions.aggressive.amount),
+                    newSalary: formatCurrency(results.currentSalaryYearly + results.hikeOptions.aggressive.amount)
+                }
+            };
+
+            const objectionHandlers = Object.values(OBJECTION_RESPONSES).map((obj) => ({
+                title: obj.title,
+                response: obj.responses[tone] || obj.responses.professional
+            }));
+
+            const closingStatements = [
+                "Thank you for discussing this with me. I am committed to delivering strong outcomes and would like to agree on the next step.",
+                "I appreciate your time and consideration. When can we follow up with a decision or a timeline?",
+                "I value the team and want to continue contributing at a high level. Please let me know what additional information would help finalize this."
+            ];
+
+            const followUpTemplates = [
+                `24-hour follow-up: Hi [Manager Name], thank you for discussing compensation with me today. Sharing a quick summary: role scope, market gap (${marketGapText}), and proposed ${ask.recommended.percent}% adjustment. Happy to provide additional details as needed.`,
+                `1-week follow-up: Hi [Manager Name], checking in on our compensation discussion. Please let me know if there are any updates or additional data required from my side.`,
+                `Post-meeting note: Thank you for the discussion and feedback. I appreciate the clarity and will follow up on the agreed timeline and milestones.`
+            ];
+
+            const emailVersion = `Subject: Compensation Discussion Follow-up - ${formData.role}\n\nDear [Manager Name],\n\nThank you for your time today.\n\nI wanted to summarize my request for a compensation review:\n- Role: ${formData.role} (${formData.experience} years)\n- Current salary: ${formatCurrency(results.currentSalaryYearly)} yearly\n- Market position: ${marketGapText}\n- Market range: ${formatCurrency(results.marketRange.min)} - ${formatCurrency(results.marketRange.max)}\n- Recommended adjustment: ${ask.recommended.percent}% (${ask.recommended.raise}), bringing total compensation to approximately ${ask.recommended.newSalary}\n\nI appreciate your consideration and am happy to share additional evidence of impact and outcomes.\n\nBest regards,\n[Your Name]`;
+
+            const fullScript = [
+                `${channelLabel.toUpperCase()} SCRIPT - ${contextLabel.toUpperCase()}`,
+                '',
+                'OPENING LINES',
+                ...openingLines.map((line, i) => `${i + 1}. ${line}`),
+                '',
+                'KEY TALKING POINTS',
+                ...talkingPoints.map((point) => `- ${point}`),
+                '',
+                'JUSTIFICATION FRAMEWORK',
+                ...justification.map((item) => `- ${item}`),
+                '',
+                'THE ASK',
+                `Conservative: ${ask.conservative.percent}% (${ask.conservative.raise}) -> ${ask.conservative.newSalary}`,
+                `Recommended: ${ask.recommended.percent}% (${ask.recommended.raise}) -> ${ask.recommended.newSalary}`,
+                `Ambitious: ${ask.ambitious.percent}% (${ask.ambitious.raise}) -> ${ask.ambitious.newSalary}`,
+                '',
+                'OBJECTION HANDLERS',
+                ...objectionHandlers.map((item) => `If "${item.title}" -> ${item.response}`),
+                '',
+                'CLOSING STATEMENTS',
+                ...closingStatements.map((line, i) => `${i + 1}. ${line}`),
+                '',
+                isWrittenChannel ? 'FOLLOW-UP TEMPLATES' : 'POST-CONVERSATION FOLLOW-UP',
+                ...followUpTemplates.map((line) => `- ${line}`)
+            ].join('\n');
+
+            return {
+                channelLabel,
+                contextLabel,
+                openingLines,
+                talkingPoints,
+                justification,
+                ask,
+                objectionHandlers,
+                closingStatements,
+                followUpTemplates,
+                emailVersion,
+                fullScript
+            };
+        }
+
+        function getExperienceBracket(years) {
+            if (years <= 2) return '0-2';
+            if (years <= 5) return '3-5';
+            return '6+';
+        }
+
+        function calculateResults(formData) {
+            const bracket = getExperienceBracket(formData.experience);
+            const marketRange = MARKET_DATA[formData.region][formData.role][bracket];
+            const marketAvg = (marketRange.min + marketRange.max) / 2;
+            
+            // Convert salary to yearly base currency
+            let currentSalaryYearly = formData.salary;
+            let wasMonthly = false;
+            if (formData.salaryType === 'monthly') {
+                currentSalaryYearly = formData.salary * 12;
+                wasMonthly = true;
+            }
+
+            // Calculate underpaid/overpaid percentage
+            const salaryDiff = ((currentSalaryYearly - marketAvg) / marketAvg) * 100;
+            
+            let status = 'fair';
+            if (salaryDiff < -15) status = 'underpaid';
+            else if (salaryDiff > 15) status = 'overpaid';
+
+            // Calculate hike readiness score
+            const monthsSinceHike = calculateMonthsSince(formData.lastHikeDate, formData.neverReceivedHike);
+            const neverReceivedHike = formData.neverReceivedHike;
+            let score = 0;
+            let timePoints = 0;
+            let salaryPoints = 0;
+            let skillPoints = 0;
+            
+            // Time since last hike (max 40 points)
+            if (neverReceivedHike) {
+                timePoints = 40; // Maximum points for never receiving a hike
+            } else if (monthsSinceHike >= 24) {
+                timePoints = 40;
+            } else if (monthsSinceHike >= 18) {
+                timePoints = 35;
+            } else if (monthsSinceHike >= 12) {
+                timePoints = 30;
+            } else if (monthsSinceHike >= 9) {
+                timePoints = 20;
+            } else {
+                timePoints = 10;
+            }
+            score += timePoints;
+
+            // Salary vs market (max 40 points)
+            if (salaryDiff < -20) salaryPoints = 40;
+            else if (salaryDiff < -10) salaryPoints = 30;
+            else if (salaryDiff < 0) salaryPoints = 20;
+            else if (salaryDiff < 10) salaryPoints = 10;
+            score += salaryPoints;
+
+            // Skills (max 20 points)
+            skillPoints = Math.min(formData.skills.length * 3, 20);
+            score += skillPoints;
+
+            score = Math.min(score, 100);
+
+            // Hike suggestions
+            let safeHike = 10;
+            let idealHike = 15;
+            let aggressiveHike = 25;
+
+            if (neverReceivedHike) {
+                safeHike = 18;
+                idealHike = 28;
+                aggressiveHike = 40;
+            } else if (status === 'underpaid') {
+                safeHike = 15;
+                idealHike = 25;
+                aggressiveHike = 35;
+            } else if (monthsSinceHike >= 18) {
+                safeHike = 12;
+                idealHike = 18;
+                aggressiveHike = 28;
+            }
+
+            return {
+                currentSalaryYearly,
+                wasMonthly,
+                marketRange,
+                marketAvg,
+                salaryDiff,
+                status,
+                score,
+                monthsSinceHike,
+                neverReceivedHike,
+                scoreBreakdown: {
+                    timePoints,
+                    salaryPoints,
+                    skillPoints
+                },
+                hikeOptions: {
+                    safe: { percent: safeHike, amount: currentSalaryYearly * (safeHike / 100) },
+                    ideal: { percent: idealHike, amount: currentSalaryYearly * (idealHike / 100) },
+                    aggressive: { percent: aggressiveHike, amount: currentSalaryYearly * (aggressiveHike / 100) }
+                }
+            };
+        }
+
+        function calculateMonthsSince(dateStr, neverReceivedHike) {
+            if (neverReceivedHike) return 999; // Special value indicating never received
+            if (!dateStr) return 0;
+            const [year, month] = dateStr.split('-').map(Number);
+            const lastHike = new Date(year, month - 1);
+            const now = new Date();
+            const months = (now.getFullYear() - lastHike.getFullYear()) * 12 + 
+                          (now.getMonth() - lastHike.getMonth());
+            return Math.max(months, 0);
+        }
+
+        function InputForm({ onSubmit, initialData }) {
+            const CLEARED_FORM_DATA = {
+                region: '',
+                role: '',
+                experience: '',
+                salary: '',
+                salaryType: '',
+                lastHikeDate: '',
+                neverReceivedHike: false,
+                companyType: '',
+                skills: []
+            };
+
+            const [formData, setFormData] = useState(() =>
+                initialData ? { ...initialData } : { ...CLEARED_FORM_DATA }
+            );
+            const [skillCategory, setSkillCategory] = useState('Suggested');
+            const [skillToAdd, setSkillToAdd] = useState('');
+
+            useEffect(() => {
+                if (initialData) {
+                    setFormData({ ...initialData });
+                }
+            }, [initialData]);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+
+                if (
+                    !formData.region ||
+                    !formData.role ||
+                    formData.experience === '' ||
+                    formData.salary === '' ||
+                    !formData.salaryType ||
+                    !formData.companyType ||
+                    (!formData.neverReceivedHike && !formData.lastHikeDate)
+                ) {
+                    alert('Please complete required fields before analyzing.');
+                    return;
+                }
+
+                onSubmit({
+                    ...formData,
+                    experience: Number(formData.experience),
+                    salary: Number(formData.salary)
+                });
+            };
+
+            const handleReset = () => {
+                // Clear all user-entered values
+                setFormData({ ...CLEARED_FORM_DATA });
+                setSkillCategory('Suggested');
+                setSkillToAdd('');
+                // Scroll to top of form
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const toggleSkill = (skill) => {
+                setFormData(prev => ({
+                    ...prev,
+                    skills: prev.skills.includes(skill)
+                        ? prev.skills.filter(s => s !== skill)
+                        : [...prev.skills, skill]
+                }));
+            };
+
+            const addSkill = () => {
+                if (!skillToAdd || formData.skills.includes(skillToAdd)) return;
+                setFormData(prev => ({ ...prev, skills: [...prev.skills, skillToAdd] }));
+                setSkillToAdd('');
+            };
+
+            const roleCategory = Object.entries(ROLE_CATEGORIES).find(([, roles]) => roles.includes(formData.role))?.[0];
+            const suggestedSkills = roleCategory
+                ? [...new Set((ROLE_TO_SKILL_CATEGORIES[roleCategory] || []).flatMap((category) => SKILL_CATEGORIES[category] || []))]
+                : [];
+            const skillsForDropdown = skillCategory === 'All'
+                ? SKILLS
+                : skillCategory === 'Suggested'
+                ? (suggestedSkills.length > 0 ? suggestedSkills : SKILLS)
+                : (SKILL_CATEGORIES[skillCategory] || []);
+            const availableSkills = skillsForDropdown.filter((skill) => !formData.skills.includes(skill));
+
+            const currencyConfig = CURRENCY_CONFIG[formData.region];
+
+            return (
+                <form onSubmit={handleSubmit}>
+                    <div className="card">
+                        <h2 className="card-title">Your Details</h2>
+                        
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <label>Region</label>
+                                <select 
+                                    value={formData.region}
+                                    onChange={(e) => setFormData({...formData, region: e.target.value})}
+                                >
+                                    <option value="" disabled>Select region</option>
+                                    {REGIONS.map(region => (
+                                        <option key={region} value={region}>{region}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Role</label>
+                                <select 
+                                    value={formData.role}
+                                    onChange={(e) => setFormData({...formData, role: e.target.value})}
+                                >
+                                    <option value="" disabled>Select the role closest to your current job</option>
+                                    {Object.entries(ROLE_CATEGORIES).map(([category, roles]) => (
+                                        <optgroup key={category} label={category}>
+                                            {roles.map(role => (
+                                                <option key={role} value={role}>{role}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
+                                </select>
+                                <div className="field-helper">
+                                    Choose the role that best matches your day-to-day work, not your official title.
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Years of Experience</label>
+                                <input 
+                                    type="number" 
+                                    value={formData.experience}
+                                    onChange={(e) => setFormData({...formData, experience: e.target.value === '' ? '' : parseInt(e.target.value, 10)})}
+                                    min="0" 
+                                    max="30"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>
+                                    {currencyConfig ? `Current Salary (${currencyConfig.symbol})` : 'Current Salary'}
+                                </label>
+                                <input 
+                                    type="number" 
+                                    value={formData.salary}
+                                    onChange={(e) => setFormData({...formData, salary: e.target.value === '' ? '' : parseInt(e.target.value, 10)})}
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Salary Type</label>
+                                <div className="toggle-group">
+                                    <button 
+                                        type="button"
+                                        className={`toggle-btn ${formData.salaryType === 'monthly' ? 'active' : ''}`}
+                                        onClick={() => setFormData({...formData, salaryType: 'monthly'})}
+                                    >
+                                        Monthly
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        className={`toggle-btn ${formData.salaryType === 'yearly' ? 'active' : ''}`}
+                                        onClick={() => setFormData({...formData, salaryType: 'yearly'})}
+                                    >
+                                        Yearly
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Last Hike Date</label>
+                                <input 
+                                    type="month" 
+                                    value={formData.lastHikeDate}
+                                    onChange={(e) => setFormData({...formData, lastHikeDate: e.target.value})}
+                                    max={new Date().toISOString().slice(0, 7)}
+                                    disabled={formData.neverReceivedHike}
+                                    style={{opacity: formData.neverReceivedHike ? 0.5 : 1}}
+                                />
+                                <div 
+                                    className="checkbox-container"
+                                    onClick={() => setFormData({...formData, neverReceivedHike: !formData.neverReceivedHike})}
+                                >
+                                    <input 
+                                        type="checkbox"
+                                        checked={formData.neverReceivedHike}
+                                        onChange={(e) => setFormData({...formData, neverReceivedHike: e.target.checked})}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <label className="checkbox-label">
+                                        I have never received a salary hike
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Company Type</label>
+                                <select 
+                                    value={formData.companyType}
+                                    onChange={(e) => setFormData({...formData, companyType: e.target.value})}
+                                >
+                                    <option value="" disabled>Select company type</option>
+                                    {COMPANY_TYPES.map(type => (
+                                        <option key={type} value={type}>{type}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{marginBottom: '2rem'}}>
+                            <label>Your Skills (Select all that apply)</label>
+                            <div className="skills-panel">
+                                <div className="skills-toolbar-simple">
+                                    <select
+                                        value={skillCategory}
+                                        onChange={(e) => {
+                                            setSkillCategory(e.target.value);
+                                            setSkillToAdd('');
+                                        }}
+                                    >
+                                        <option value="Suggested">
+                                            {roleCategory ? `Suggested for ${formData.role}` : 'Suggested Skills'}
+                                        </option>
+                                        <option value="All">All Skills</option>
+                                        {Object.keys(SKILL_CATEGORIES).map((category) => (
+                                            <option key={category} value={category}>{category}</option>
+                                        ))}
+                                    </select>
+
+                                    <select
+                                        value={skillToAdd}
+                                        onChange={(e) => setSkillToAdd(e.target.value)}
+                                    >
+                                        <option value="">Select skill to add</option>
+                                        {availableSkills.map((skill) => (
+                                            <option key={skill} value={skill}>{skill}</option>
+                                        ))}
+                                    </select>
+
+                                    <button
+                                        type="button"
+                                        className="btn-skill-add"
+                                        onClick={addSkill}
+                                        disabled={!skillToAdd}
+                                    >
+                                        Add Skill
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="btn-skill-clear"
+                                        onClick={() => setFormData({ ...formData, skills: [] })}
+                                    >
+                                        Clear Skills
+                                    </button>
+                                </div>
+
+                                <div className="skills-selected-count-line">{formData.skills.length} selected</div>
+
+                                <div className="skills-selected-wrap">
+                                    {formData.skills.length > 0 ? formData.skills.map((skill) => (
+                                        <button
+                                            key={skill}
+                                            type="button"
+                                            className="selected-skill-chip"
+                                            onClick={() => toggleSkill(skill)}
+                                            title="Click to remove"
+                                        >
+                                            {skill} ×
+                                        </button>
+                                    )) : (
+                                        <div className="skills-empty">No skills selected yet. Choose a category and add skills from dropdown.</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" className="btn-primary">
+                            Analyze My Salary
+                        </button>
+                        
+                        <button type="button" onClick={handleReset} className="btn-reset">
+                            🔄 Clear All Data
+                        </button>
+                    </div>
+                </form>
+            );
+        }
+
+        function Dashboard({ formData, results, onBack }) {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const [showShareModal, setShowShareModal] = useState(false);
+            const [copySuccess, setCopySuccess] = useState(false);
+            const [conversationConfig, setConversationConfig] = useState({
+                channel: '',
+                context: 'firstTime',
+                tone: 'professional'
+            });
+            const [showConversationGuide, setShowConversationGuide] = useState(false);
+            const [conversationGuide, setConversationGuide] = useState(null);
+            const [expandedObjection, setExpandedObjection] = useState(null);
+            const [isGeneratingGuide, setIsGeneratingGuide] = useState(false);
+            const [copiedConversation, setCopiedConversation] = useState(false);
+            const [copiedEmailVersion, setCopiedEmailVersion] = useState(false);
+
+            const currencyConfig = CURRENCY_CONFIG[formData.region];
+
+            const formatCurrency = (amount) => {
+                const displayAmount = amount / currencyConfig.divisor;
+                return `${currencyConfig.symbol}${displayAmount.toFixed(1)}${currencyConfig.suffix}`;
+            };
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    const ctx = chartRef.current.getContext('2d');
+                    
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+
+                    const currentSalary = results.currentSalaryYearly;
+                    const conservativeSalary = results.currentSalaryYearly + results.hikeOptions.safe.amount;
+                    const recommendedSalary = results.currentSalaryYearly + results.hikeOptions.ideal.amount;
+                    const ambitiousSalary = results.currentSalaryYearly + results.hikeOptions.aggressive.amount;
+
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Current', 'Conservative', 'Recommended', 'Ambitious'],
+                            datasets: [{
+                                label: 'Salary Trend',
+                                data: [currentSalary, conservativeSalary, recommendedSalary, ambitiousSalary],
+                                borderColor: 'rgba(255, 138, 91, 1)',
+                                backgroundColor: 'rgba(255, 138, 91, 0.18)',
+                                pointBackgroundColor: 'rgba(255, 138, 91, 1)',
+                                pointBorderColor: '#17131f',
+                                pointBorderWidth: 3,
+                                pointRadius: 7,
+                                pointHoverRadius: 8,
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.45,
+                                cubicInterpolationMode: 'monotone'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#231a2e',
+                                    titleColor: '#f7f2ff',
+                                    bodyColor: '#f7f2ff',
+                                    borderColor: '#3a2d4f',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: (context) => formatCurrency(context.parsed.y)
+                                    }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#3a2d4f' },
+                                    ticks: { 
+                                        color: '#a797be',
+                                        callback: (value) => formatCurrency(value)
+                                    }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#a797be' }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [results]);
+
+            const statusConfig = {
+                underpaid: {
+                    color: 'var(--accent-danger)',
+                    message: `You're earning about ${Math.abs(results.salaryDiff).toFixed(0)}% below market average for your role.`,
+                    alertClass: 'alert-danger'
+                },
+                fair: {
+                    color: 'var(--accent-success)',
+                    message: `Your compensation aligns with market standards.`,
+                    alertClass: 'alert-success'
+                },
+                overpaid: {
+                    color: 'var(--accent-primary)',
+                    message: `You're earning about ${results.salaryDiff.toFixed(0)}% above market average.`,
+                    alertClass: 'alert-info'
+                }
+            };
+
+            const scoreConfig = results.score < 40 
+                ? { status: 'Build Your Case', description: 'Focus on demonstrating value and developing key skills.', color: 'var(--text-muted)' }
+                : results.score < 70 
+                ? { status: 'Prepare to Negotiate', description: 'Document achievements and research market benchmarks.', color: 'var(--accent-warning)' }
+                : { status: 'Strong Position to Negotiate', description: 'Your profile supports a compensation discussion.', color: 'var(--accent-success)' };
+
+            const handleShare = () => {
+                setShowShareModal(true);
+                setCopySuccess(false);
+            };
+
+            const handleCopyShare = () => {
+                const shareText = `📊 My Salary Insight (HikeTrack)
+
+Role: ${formData.role}
+Experience: ${formData.experience} years
+Region: ${formData.region}
+
+Market Gap: ${results.salaryDiff > 0 ? '+' : ''}${results.salaryDiff.toFixed(0)}%
+Hike Readiness Score: ${results.score}/100
+Status: ${scoreConfig.status}
+
+Recommended Hike: ${results.hikeOptions.ideal.percent}%
+
+Know your worth. Negotiate with confidence.`;
+
+                navigator.clipboard.writeText(shareText).then(() => {
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
+                });
+            };
+
+            const handleGenerateConversationGuide = () => {
+                if (!conversationConfig.channel) {
+                    alert('Please select a communication channel.');
+                    return;
+                }
+
+                setIsGeneratingGuide(true);
+                setCopiedConversation(false);
+                setCopiedEmailVersion(false);
+
+                setTimeout(() => {
+                    const generated = generateConversationScript(
+                        conversationConfig.channel,
+                        conversationConfig.context,
+                        conversationConfig.tone,
+                        formData,
+                        results,
+                        formatCurrency
+                    );
+                    setConversationGuide(generated);
+                    setShowConversationGuide(true);
+                    setExpandedObjection(null);
+                    setIsGeneratingGuide(false);
+                }, 700);
+            };
+
+            const handleCopyConversation = () => {
+                if (!conversationGuide) return;
+                navigator.clipboard.writeText(conversationGuide.fullScript).then(() => {
+                    setCopiedConversation(true);
+                    setTimeout(() => setCopiedConversation(false), 2000);
+                });
+            };
+
+            const handleCopyEmailVersion = () => {
+                if (!conversationGuide) return;
+                navigator.clipboard.writeText(conversationGuide.emailVersion).then(() => {
+                    setCopiedEmailVersion(true);
+                    setTimeout(() => setCopiedEmailVersion(false), 2000);
+                });
+            };
+
+            return (
+                <div>
+                    <div className="card">
+                        <div className="dashboard-header">
+                            <h2 className="card-title">Your Salary Analysis</h2>
+                            <button onClick={onBack} className="btn-secondary">← Edit Details</button>
+                        </div>
+
+                        <div className={`alert ${statusConfig[results.status].alertClass}`}>
+                            <div>
+                                <strong>{formData.role}</strong> with <strong>{formData.experience} years</strong> experience in <strong>{formData.region}</strong>
+                                <br/>
+                                {statusConfig[results.status].message}
+                            </div>
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-label">Your Salary</div>
+                                <div className="stat-value">{formatCurrency(results.currentSalaryYearly)}</div>
+                                <div className="stat-subtitle">
+                                    per year
+                                    {results.wasMonthly && <span style={{display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem'}}>Converted from monthly input</span>}
+                                </div>
+                            </div>
+
+                            <div className="stat-card">
+                                <div className="stat-label">Market Range</div>
+                                <div className="stat-value">{formatCurrency(results.marketRange.min)} - {formatCurrency(results.marketRange.max)}</div>
+                                <div className="stat-subtitle">
+                                    Average: {formatCurrency(results.marketAvg)}
+                                    <div className="data-source">Estimated using public salary benchmarks and role trends.</div>
+                                </div>
+                            </div>
+
+                            <div className="stat-card">
+                                <div className="stat-label">Time Since Hike</div>
+                                <div className="stat-value">
+                                    {results.neverReceivedHike ? 'Never' : `${results.monthsSinceHike} months`}
+                                </div>
+                                <div className="stat-subtitle">
+                                    {results.neverReceivedHike ? 'No hike received yet' : `Last hike: ${formData.lastHikeDate}`}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">Hike Readiness Score</h2>
+                        
+                        <div className="score-container">
+                            <div className="score-circle">
+                                <svg viewBox="0 0 180 180" style={{width: '100%', height: '100%', transform: 'rotate(-90deg)'}}>
+                                    <circle cx="90" cy="90" r="70" fill="none" stroke="var(--border)" strokeWidth="12"/>
+                                    <circle 
+                                        cx="90" 
+                                        cy="90" 
+                                        r="70" 
+                                        fill="none" 
+                                        stroke={scoreConfig.color}
+                                        strokeWidth="12"
+                                        strokeDasharray={`${2 * Math.PI * 70}`}
+                                        strokeDashoffset={`${2 * Math.PI * 70 * (1 - results.score / 100)}`}
+                                        strokeLinecap="round"
+                                        style={{transition: 'stroke-dashoffset 1s ease'}}
+                                    />
+                                </svg>
+                                <div className="score-number" style={{color: scoreConfig.color}}>
+                                    {results.score}
+                                </div>
+                            </div>
+                            
+                            <div className="score-status" style={{color: scoreConfig.color}}>
+                                {scoreConfig.status}
+                            </div>
+                            <div className="score-description">
+                                {scoreConfig.description}
+                            </div>
+                        </div>
+
+                        <div className="score-explainer">
+                            <div className="score-explainer-title">Why this score?</div>
+                            <div className="score-breakdown">
+                                <div className="score-item">
+                                    <span className="score-item-label">
+                                        {results.neverReceivedHike ? 'Never received hike' : 'Time since last hike'}
+                                    </span>
+                                    <span className="score-item-value">+{results.scoreBreakdown.timePoints}</span>
+                                </div>
+                                <div className="score-item">
+                                    <span className="score-item-label">Salary vs market gap</span>
+                                    <span className="score-item-value">+{results.scoreBreakdown.salaryPoints}</span>
+                                </div>
+                                <div className="score-item">
+                                    <span className="score-item-label">Skill strength ({formData.skills.length} skills)</span>
+                                    <span className="score-item-value">+{results.scoreBreakdown.skillPoints}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">Hike Suggestions</h2>
+                        
+                        <p style={{color: 'var(--text-secondary)', marginBottom: '1.5rem'}}>
+                            {results.neverReceivedHike
+                                ? "Never receiving a hike puts you in a strong position to negotiate. Document your contributions and request fair compensation."
+                                : results.status === 'underpaid' 
+                                ? "Market data indicates strong negotiation leverage. Document your contributions and impact."
+                                : results.monthsSinceHike >= 18
+                                ? "Significant time has passed since your last adjustment. Consider initiating a discussion."
+                                : "Standard compensation adjustment ranges based on your profile and current market conditions."}
+                        </p>
+
+                        <div className="hike-options">
+                            <div className="hike-option">
+                                <div className="hike-label">Conservative</div>
+                                <div className="hike-value" style={{color: 'var(--accent-success)'}}>
+                                    {results.hikeOptions.safe.percent}%
+                                </div>
+                                <div className="hike-amount">
+                                    +{formatCurrency(results.hikeOptions.safe.amount)}
+                                </div>
+                            </div>
+
+                            <div className="hike-option" style={{borderColor: 'var(--accent-primary)'}}>
+                                <div className="hike-label">Recommended</div>
+                                <div className="hike-value" style={{color: 'var(--accent-primary)'}}>
+                                    {results.hikeOptions.ideal.percent}%
+                                </div>
+                                <div className="hike-amount">
+                                    +{formatCurrency(results.hikeOptions.ideal.amount)}
+                                </div>
+                            </div>
+
+                            <div className="hike-option">
+                                <div className="hike-label">Ambitious</div>
+                                <div className="hike-value" style={{color: 'var(--accent-warning)'}}>
+                                    {results.hikeOptions.aggressive.percent}%
+                                </div>
+                                <div className="hike-amount">
+                                    +{formatCurrency(results.hikeOptions.aggressive.amount)}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="alert alert-info" style={{marginTop: '1.5rem'}}>
+                            <div>
+                                💡 <strong>Strategy:</strong> A <strong>{results.hikeOptions.ideal.percent}% increase</strong> aligns with your profile and market position. Support your request with quantifiable achievements.
+                            </div>
+                        </div>
+
+                        <button onClick={handleShare} className="btn-share">
+                            📤 Share My Salary Insight
+                        </button>
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">Conversation Starter</h2>
+                        <p style={{color: 'var(--text-secondary)', marginBottom: '1rem'}}>
+                            Build a practical negotiation guide tailored to your channel, context, and compensation data.
+                        </p>
+
+                        <div style={{fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.45rem'}}>
+                            Select Communication Channel
+                        </div>
+                        <div className="conversation-channel-grid">
+                            {CONVERSATION_CHANNELS.map((channel) => (
+                                <button
+                                    key={channel.id}
+                                    type="button"
+                                    className={`channel-button ${conversationConfig.channel === channel.id ? 'selected' : ''}`}
+                                    onClick={() => setConversationConfig((prev) => ({ ...prev, channel: channel.id }))}
+                                    aria-label={channel.label}
+                                >
+                                    <div className="channel-icon">{channel.icon}</div>
+                                    <div className="channel-label">{channel.label}</div>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="conversation-controls">
+                            <div className="form-group">
+                                <label>Conversation Type</label>
+                                <select
+                                    value={conversationConfig.context}
+                                    onChange={(e) => setConversationConfig((prev) => ({ ...prev, context: e.target.value }))}
+                                >
+                                    {CONVERSATION_CONTEXTS.map((contextOption) => (
+                                        <option key={contextOption.id} value={contextOption.id}>{contextOption.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Tone Style</label>
+                                <div className="tone-toggle-group">
+                                    {['professional', 'friendly', 'assertive', 'collaborative'].map((tone) => (
+                                        <button
+                                            key={tone}
+                                            type="button"
+                                            className={`tone-btn ${conversationConfig.tone === tone ? 'active' : ''}`}
+                                            onClick={() => setConversationConfig((prev) => ({ ...prev, tone }))}
+                                        >
+                                            {tone.charAt(0).toUpperCase() + tone.slice(1)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="conversation-generate-btn"
+                            onClick={handleGenerateConversationGuide}
+                            disabled={isGeneratingGuide}
+                        >
+                            {isGeneratingGuide ? 'Generating Guide...' : 'Generate Conversation Guide'}
+                        </button>
+
+                        {showConversationGuide && conversationGuide && (
+                            <div style={{marginTop: '1rem', animation: 'fadeInUp 0.35s ease'}}>
+                                <div className="guide-meta">
+                                    Channel: {conversationGuide.channelLabel} | Context: {conversationGuide.contextLabel}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Opening Lines</div>
+                                    {conversationGuide.openingLines.map((line, idx) => (
+                                        <div key={`open-${idx}`} className="script-option">
+                                            <strong>Option {idx + 1}:</strong> {line}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Key Talking Points</div>
+                                    {conversationGuide.talkingPoints.map((point, idx) => (
+                                        <div key={`point-${idx}`} className="talking-point">{point}</div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Justification Framework</div>
+                                    {conversationGuide.justification.map((item, idx) => (
+                                        <div key={`why-${idx}`} className="script-option">{item}</div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">The Ask</div>
+                                    <div className="ask-grid">
+                                        <div className="ask-option">
+                                            <div className="ask-title">Conservative</div>
+                                            <div className="ask-percent">{conversationGuide.ask.conservative.percent}%</div>
+                                            <div className="ask-amount">Raise: {conversationGuide.ask.conservative.raise}</div>
+                                            <div className="ask-amount">Target: {conversationGuide.ask.conservative.newSalary}</div>
+                                        </div>
+                                        <div className="ask-option recommended">
+                                            <div className="ask-title">Recommended</div>
+                                            <div className="ask-percent">{conversationGuide.ask.recommended.percent}%</div>
+                                            <div className="ask-amount">Raise: {conversationGuide.ask.recommended.raise}</div>
+                                            <div className="ask-amount">Target: {conversationGuide.ask.recommended.newSalary}</div>
+                                        </div>
+                                        <div className="ask-option">
+                                            <div className="ask-title">Ambitious</div>
+                                            <div className="ask-percent">{conversationGuide.ask.ambitious.percent}%</div>
+                                            <div className="ask-amount">Raise: {conversationGuide.ask.ambitious.raise}</div>
+                                            <div className="ask-amount">Target: {conversationGuide.ask.ambitious.newSalary}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Handling Objections</div>
+                                    {conversationGuide.objectionHandlers.map((item, idx) => (
+                                        <div key={`objection-${idx}`} className="objection-handler">
+                                            <button
+                                                type="button"
+                                                className="objection-header"
+                                                onClick={() => setExpandedObjection(expandedObjection === idx ? null : idx)}
+                                                aria-expanded={expandedObjection === idx}
+                                            >
+                                                <span>{item.title}</span>
+                                                <span>{expandedObjection === idx ? 'Hide' : 'Show'}</span>
+                                            </button>
+                                            {expandedObjection === idx && (
+                                                <div className="objection-content">{item.response}</div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Closing Statements</div>
+                                    {conversationGuide.closingStatements.map((line, idx) => (
+                                        <div key={`close-${idx}`} className="script-option">{line}</div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-section">
+                                    <div className="conversation-section-title">Follow-up Templates</div>
+                                    {conversationGuide.followUpTemplates.map((item, idx) => (
+                                        <div key={`follow-${idx}`} className="script-option">{item}</div>
+                                    ))}
+                                </div>
+
+                                <div className="conversation-actions">
+                                    <button type="button" className="copy-script-btn" onClick={handleCopyConversation}>
+                                        {copiedConversation ? 'Copied Full Script' : 'Copy Full Script'}
+                                    </button>
+                                    <button type="button" className="copy-script-btn" onClick={handleCopyEmailVersion}>
+                                        {copiedEmailVersion ? 'Copied Email Version' : 'Copy Email Version'}
+                                    </button>
+                                    <button type="button" className="copy-script-btn" onClick={() => window.print()}>
+                                        Print / Save PDF
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="card">
+                        <h2 className="card-title">Salary Growth Visual</h2>
+                        <div className="chart-container">
+                            <canvas ref={chartRef}></canvas>
+                        </div>
+                    </div>
+
+                    {showShareModal && (
+                        <div className="share-modal" onClick={() => setShowShareModal(false)}>
+                            <div className="share-card" onClick={(e) => e.stopPropagation()}>
+                                <button className="share-close" onClick={() => setShowShareModal(false)}>×</button>
+                                <h3 style={{marginBottom: '1rem', fontFamily: 'JetBrains Mono'}}>Share Your Insight</h3>
+                                <div className="share-content">
+                                    📊 My Salary Insight (HikeTrack)
+                                    <br/><br/>
+                                    Role: {formData.role}<br/>
+                                    Experience: {formData.experience} years<br/>
+                                    Region: {formData.region}
+                                    <br/><br/>
+                                    Market Gap: {results.salaryDiff > 0 ? '+' : ''}{results.salaryDiff.toFixed(0)}%<br/>
+                                    Hike Readiness Score: {results.score}/100<br/>
+                                    Status: {scoreConfig.status}
+                                    <br/><br/>
+                                    Recommended Hike: {results.hikeOptions.ideal.percent}%
+                                    <br/><br/>
+                                    Know your worth. Negotiate with confidence.
+                                </div>
+                                <button onClick={handleCopyShare} className="btn-copy">
+                                    {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function App() {
+            const [showDashboard, setShowDashboard] = useState(false);
+            const [formData, setFormData] = useState(null);
+            const [results, setResults] = useState(null);
+
+            const handleSubmit = (data) => {
+                setFormData(data);
+                setResults(calculateResults(data));
+                setShowDashboard(true);
+                window.scrollTo(0, 0);
+            };
+
+            const handleBack = () => {
+                setShowDashboard(false);
+                window.scrollTo(0, 0);
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <div className="logo">HikeTrack</div>
+                        <div className="tagline">Know Your Worth. Ask With Confidence.</div>
+                    </div>
+
+                    {!showDashboard ? (
+                        <InputForm onSubmit={handleSubmit} initialData={formData} />
+                    ) : (
+                        <Dashboard formData={formData} results={results} onBack={handleBack} />
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
