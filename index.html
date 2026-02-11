@@ -40,15 +40,88 @@
             line-height: 1.6;
             font-size: 19px;
             min-height: 100vh;
+            position: relative;
             background-image: 
-                radial-gradient(circle at 20% 50%, rgba(255, 138, 91, 0.09) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(249, 199, 79, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 18% 30%, rgba(112, 185, 255, 0.24) 0%, transparent 52%),
+                radial-gradient(circle at 82% 22%, rgba(163, 220, 255, 0.2) 0%, transparent 54%),
+                radial-gradient(circle at 50% 88%, rgba(91, 160, 255, 0.16) 0%, transparent 50%);
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            inset: -20%;
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(48px);
+            opacity: 0.55;
+            will-change: transform;
+        }
+
+        body::before {
+            background:
+                radial-gradient(circle at 16% 22%, rgba(109, 183, 255, 0.32) 0%, transparent 40%),
+                radial-gradient(circle at 84% 14%, rgba(154, 216, 255, 0.28) 0%, transparent 38%),
+                radial-gradient(circle at 70% 82%, rgba(93, 168, 255, 0.2) 0%, transparent 36%);
+            animation: ambientDriftA 16s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            background:
+                radial-gradient(circle at 12% 78%, rgba(124, 193, 255, 0.22) 0%, transparent 36%),
+                radial-gradient(circle at 62% 50%, rgba(96, 170, 255, 0.2) 0%, transparent 44%),
+                radial-gradient(circle at 88% 72%, rgba(177, 227, 255, 0.16) 0%, transparent 36%);
+            animation: ambientDriftB 22s ease-in-out infinite alternate;
+        }
+
+        html {
+            font-size: 19px;
         }
 
         html, body, #root {
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
+        }
+
+        #root {
+            position: relative;
+            z-index: 1;
+        }
+
+        #root::before,
+        #root::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        #root::before {
+            z-index: -1;
+            opacity: 0.58;
+            background-image:
+                radial-gradient(1.2px 1.2px at 10% 20%, rgba(255, 255, 255, 0.55) 50%, transparent 55%),
+                radial-gradient(1px 1px at 30% 70%, rgba(255, 255, 255, 0.42) 50%, transparent 55%),
+                radial-gradient(1.4px 1.4px at 60% 30%, rgba(255, 255, 255, 0.58) 50%, transparent 55%),
+                radial-gradient(1px 1px at 80% 60%, rgba(255, 255, 255, 0.40) 50%, transparent 55%),
+                radial-gradient(1.2px 1.2px at 90% 15%, rgba(255, 255, 255, 0.48) 50%, transparent 55%);
+            background-size: 220px 220px, 280px 280px, 320px 320px, 360px 360px, 420px 420px;
+            animation: starsDriftA 48s linear infinite;
+        }
+
+        #root::after {
+            z-index: -1;
+            opacity: 0.5;
+            background-image:
+                radial-gradient(1px 1px at 15% 30%, rgba(255, 255, 255, 0.42) 50%, transparent 55%),
+                radial-gradient(1.2px 1.2px at 55% 80%, rgba(255, 255, 255, 0.50) 50%, transparent 55%),
+                radial-gradient(1px 1px at 85% 40%, rgba(255, 255, 255, 0.36) 50%, transparent 55%),
+                radial-gradient(1.4px 1.4px at 35% 55%, rgba(255, 255, 255, 0.44) 50%, transparent 55%),
+                radial-gradient(1px 1px at 75% 15%, rgba(255, 255, 255, 0.32) 50%, transparent 55%);
+            background-size: 260px 260px, 340px 340px, 420px 420px, 300px 300px, 380px 380px;
+            animation: starsDriftB 62s linear infinite;
         }
 
         .container {
@@ -214,10 +287,39 @@
             min-width: 0;
         }
 
+        select {
+            display: block;
+            min-height: 48px;
+            min-width: 0;
+            max-width: 100%;
+            padding-right: 0.875rem;
+            text-overflow: ellipsis;
+            line-height: 1.35;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
         input:focus, select:focus {
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(255, 138, 91, 0.18);
+        }
+
+        .input-invalid {
+            border-color: var(--accent-danger) !important;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.16) !important;
+        }
+
+        .toggle-group.input-invalid {
+            border: 1px solid var(--accent-danger);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.16);
+        }
+
+        .field-error {
+            font-size: 0.86rem;
+            color: var(--accent-danger);
+            margin-top: 0.3rem;
+            line-height: 1.3;
         }
 
         .toggle-group {
@@ -260,10 +362,19 @@
             gap: 0.75rem;
             align-items: center;
             margin-bottom: 0.9rem;
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) {
+            .skills-toolbar-simple {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         .skills-toolbar-simple select {
-            height: 42px;
+            height: 60px;
+            width: 100%;
+            min-width: 0;
         }
 
         .btn-skill-add,
@@ -595,6 +706,28 @@
             50% {
                 opacity: 0.5;
             }
+        }
+
+        @keyframes ambientDriftA {
+            0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+            50% { transform: translate3d(2%, 1.5%, 0) scale(1.04); }
+            100% { transform: translate3d(-1%, 2%, 0) scale(1.02); }
+        }
+
+        @keyframes ambientDriftB {
+            0% { transform: translate3d(2%, -1.5%, 0) scale(1.01); }
+            50% { transform: translate3d(-2.5%, 1%, 0) scale(1.05); }
+            100% { transform: translate3d(1.5%, -2%, 0) scale(1.03); }
+        }
+
+        @keyframes starsDriftA {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-240px, 0, 0); }
+        }
+
+        @keyframes starsDriftB {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(0, -220px, 0); }
         }
 
         .underpaid { color: var(--accent-danger); }
@@ -1162,10 +1295,20 @@
                 grid-template-columns: 1fr;
             }
 
+            select {
+                min-height: 50px;
+                font-size: 0.95rem;
+            }
+
             .btn-skill-add,
             .btn-skill-clear {
                 width: 100%;
                 text-align: center;
+            }
+
+            select option,
+            select optgroup {
+                font-size: 0.9rem;
             }
 
             .hike-option {
@@ -1213,6 +1356,16 @@
 
             .card {
                 padding: 1rem;
+            }
+
+            select {
+                min-height: 48px;
+                font-size: 0.9rem;
+            }
+
+            select option,
+            select optgroup {
+                font-size: 0.84rem;
             }
 
             .btn-primary {
@@ -2141,6 +2294,18 @@
             'Other Tech Roles': ['Software Engineering', 'Cloud & DevOps', 'Data & BI']
         };
 
+        // Short display labels for dropdown readability on smaller screens.
+        // Values are unchanged, so salary logic and mappings remain intact.
+        const ROLE_DISPLAY_LABELS = {
+            'BI Engineer (Power BI / Tableau / Looker)': 'BI Engineer (Power BI/Tableau/Looker)',
+            'Site Reliability Engineer (SRE)': 'SRE (Site Reliability Engineer)',
+            'Other (General Tech Role)': 'Other (General Tech)'
+        };
+
+        function getRoleDisplayLabel(role) {
+            return ROLE_DISPLAY_LABELS[role] || role;
+        }
+
         // Comprehensive role taxonomy organized by category
         const ROLE_CATEGORIES = {
             'Data & Analytics': [
@@ -2538,6 +2703,72 @@
             );
             const [skillCategory, setSkillCategory] = useState('Suggested');
             const [skillToAdd, setSkillToAdd] = useState('');
+            const [errors, setErrors] = useState({});
+
+            const validateField = (name, value, data = formData) => {
+                switch (name) {
+                    case 'region':
+                        return value ? '' : 'Please select your region.';
+                    case 'role':
+                        return value ? '' : 'Please select your role.';
+                    case 'experience':
+                        if (value === '' || Number.isNaN(Number(value))) return 'Please enter years of experience.';
+                        if (Number(value) < 0 || Number(value) > 30) return 'Experience must be between 0 and 30 years.';
+                        return '';
+                    case 'salary':
+                        if (value === '' || Number.isNaN(Number(value))) return 'Please enter your current salary.';
+                        if (Number(value) <= 0) return 'Salary should be greater than 0.';
+                        return '';
+                    case 'salaryType':
+                        return value ? '' : 'Please choose salary type.';
+                    case 'lastHikeDate':
+                        if (data.neverReceivedHike) return '';
+                        return value ? '' : 'Please select your last hike date.';
+                    case 'companyType':
+                        return value ? '' : 'Please select company type.';
+                    case 'skills':
+                        return Array.isArray(value) && value.length > 0 ? '' : 'Please select at least one skill.';
+                    default:
+                        return '';
+                }
+            };
+
+            const validateAllFields = (data) => {
+                const nextErrors = {};
+                ['region', 'role', 'experience', 'salary', 'salaryType', 'lastHikeDate', 'companyType', 'skills'].forEach((field) => {
+                    const message = validateField(field, data[field], data);
+                    if (message) nextErrors[field] = message;
+                });
+                return nextErrors;
+            };
+
+            const handleFieldChange = (field, value) => {
+                setFormData((prev) => {
+                    const next = { ...prev, [field]: value };
+                    setErrors((prevErrors) => {
+                        const message = validateField(field, value, next);
+                        const updated = { ...prevErrors };
+                        if (message) updated[field] = message;
+                        else delete updated[field];
+
+                        if (field === 'neverReceivedHike' && value) {
+                            delete updated.lastHikeDate;
+                        }
+                        return updated;
+                    });
+                    return next;
+                });
+            };
+
+            const handleFieldBlur = (field) => {
+                const message = validateField(field, formData[field], formData);
+                setErrors((prev) => {
+                    const updated = { ...prev };
+                    if (message) updated[field] = message;
+                    else delete updated[field];
+                    return updated;
+                });
+            };
 
             useEffect(() => {
                 if (initialData) {
@@ -2548,16 +2779,19 @@
             const handleSubmit = (e) => {
                 e.preventDefault();
 
-                if (
-                    !formData.region ||
-                    !formData.role ||
-                    formData.experience === '' ||
-                    formData.salary === '' ||
-                    !formData.salaryType ||
-                    !formData.companyType ||
-                    (!formData.neverReceivedHike && !formData.lastHikeDate)
-                ) {
-                    alert('Please complete required fields before analyzing.');
+                const nextErrors = validateAllFields(formData);
+                if (!Array.isArray(formData.skills) || formData.skills.length === 0) {
+                    nextErrors.skills = 'Please select at least one skill.';
+                }
+                if (Object.keys(nextErrors).length > 0) {
+                    setErrors(nextErrors);
+                    setTimeout(() => {
+                        const firstInvalid = document.querySelector('.input-invalid');
+                        if (firstInvalid) {
+                            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            if (typeof firstInvalid.focus === 'function') firstInvalid.focus();
+                        }
+                    }, 0);
                     return;
                 }
 
@@ -2573,6 +2807,7 @@
                 setFormData({ ...CLEARED_FORM_DATA });
                 setSkillCategory('Suggested');
                 setSkillToAdd('');
+                setErrors({});
                 // Scroll to top of form
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             };
@@ -2584,12 +2819,27 @@
                         ? prev.skills.filter(s => s !== skill)
                         : [...prev.skills, skill]
                 }));
+                setErrors((prev) => {
+                    const updated = { ...prev };
+                    const nextSkills = formData.skills.includes(skill)
+                        ? formData.skills.filter((s) => s !== skill)
+                        : [...formData.skills, skill];
+                    const message = validateField('skills', nextSkills, { ...formData, skills: nextSkills });
+                    if (message) updated.skills = message;
+                    else delete updated.skills;
+                    return updated;
+                });
             };
 
             const addSkill = () => {
                 if (!skillToAdd || formData.skills.includes(skillToAdd)) return;
                 setFormData(prev => ({ ...prev, skills: [...prev.skills, skillToAdd] }));
                 setSkillToAdd('');
+                setErrors((prev) => {
+                    const updated = { ...prev };
+                    delete updated.skills;
+                    return updated;
+                });
             };
 
             const roleCategory = Object.entries(ROLE_CATEGORIES).find(([, roles]) => roles.includes(formData.role))?.[0];
@@ -2615,30 +2865,36 @@
                                 <label>Region</label>
                                 <select 
                                     value={formData.region}
-                                    onChange={(e) => setFormData({...formData, region: e.target.value})}
+                                    onChange={(e) => handleFieldChange('region', e.target.value)}
+                                    onBlur={() => handleFieldBlur('region')}
+                                    className={errors.region ? 'input-invalid' : ''}
                                 >
                                     <option value="" disabled>Select region</option>
                                     {REGIONS.map(region => (
                                         <option key={region} value={region}>{region}</option>
                                     ))}
                                 </select>
+                                {errors.region && <div className="field-error">{errors.region}</div>}
                             </div>
 
                             <div className="form-group">
                                 <label>Role</label>
                                 <select 
                                     value={formData.role}
-                                    onChange={(e) => setFormData({...formData, role: e.target.value})}
+                                    onChange={(e) => handleFieldChange('role', e.target.value)}
+                                    onBlur={() => handleFieldBlur('role')}
+                                    className={errors.role ? 'input-invalid' : ''}
                                 >
-                                    <option value="" disabled>Select the role closest to your current job</option>
+                                    <option value="" disabled>Select role (closest match)</option>
                                     {Object.entries(ROLE_CATEGORIES).map(([category, roles]) => (
                                         <optgroup key={category} label={category}>
                                             {roles.map(role => (
-                                                <option key={role} value={role}>{role}</option>
+                                                <option key={role} value={role}>{getRoleDisplayLabel(role)}</option>
                                             ))}
                                         </optgroup>
                                     ))}
                                 </select>
+                                {errors.role && <div className="field-error">{errors.role}</div>}
                                 <div className="field-helper">
                                     Choose the role that best matches your day-to-day work, not your official title.
                                 </div>
@@ -2649,10 +2905,13 @@
                                 <input 
                                     type="number" 
                                     value={formData.experience}
-                                    onChange={(e) => setFormData({...formData, experience: e.target.value === '' ? '' : parseInt(e.target.value, 10)})}
+                                    onChange={(e) => handleFieldChange('experience', e.target.value === '' ? '' : parseInt(e.target.value, 10))}
+                                    onBlur={() => handleFieldBlur('experience')}
+                                    className={errors.experience ? 'input-invalid' : ''}
                                     min="0" 
                                     max="30"
                                 />
+                                {errors.experience && <div className="field-error">{errors.experience}</div>}
                             </div>
 
                             <div className="form-group">
@@ -2662,29 +2921,33 @@
                                 <input 
                                     type="number" 
                                     value={formData.salary}
-                                    onChange={(e) => setFormData({...formData, salary: e.target.value === '' ? '' : parseInt(e.target.value, 10)})}
+                                    onChange={(e) => handleFieldChange('salary', e.target.value === '' ? '' : parseInt(e.target.value, 10))}
+                                    onBlur={() => handleFieldBlur('salary')}
+                                    className={errors.salary ? 'input-invalid' : ''}
                                     min="0"
                                 />
+                                {errors.salary && <div className="field-error">{errors.salary}</div>}
                             </div>
 
                             <div className="form-group">
                                 <label>Salary Type</label>
-                                <div className="toggle-group">
+                                <div className={`toggle-group ${errors.salaryType ? 'input-invalid' : ''}`}>
                                     <button 
                                         type="button"
                                         className={`toggle-btn ${formData.salaryType === 'monthly' ? 'active' : ''}`}
-                                        onClick={() => setFormData({...formData, salaryType: 'monthly'})}
+                                        onClick={() => handleFieldChange('salaryType', 'monthly')}
                                     >
                                         Monthly
                                     </button>
                                     <button 
                                         type="button"
                                         className={`toggle-btn ${formData.salaryType === 'yearly' ? 'active' : ''}`}
-                                        onClick={() => setFormData({...formData, salaryType: 'yearly'})}
+                                        onClick={() => handleFieldChange('salaryType', 'yearly')}
                                     >
                                         Yearly
                                     </button>
                                 </div>
+                                {errors.salaryType && <div className="field-error">{errors.salaryType}</div>}
                             </div>
 
                             <div className="form-group">
@@ -2692,44 +2955,50 @@
                                 <input 
                                     type="month" 
                                     value={formData.lastHikeDate}
-                                    onChange={(e) => setFormData({...formData, lastHikeDate: e.target.value})}
+                                    onChange={(e) => handleFieldChange('lastHikeDate', e.target.value)}
+                                    onBlur={() => handleFieldBlur('lastHikeDate')}
                                     max={new Date().toISOString().slice(0, 7)}
                                     disabled={formData.neverReceivedHike}
+                                    className={errors.lastHikeDate ? 'input-invalid' : ''}
                                     style={{opacity: formData.neverReceivedHike ? 0.5 : 1}}
                                 />
                                 <div 
                                     className="checkbox-container"
-                                    onClick={() => setFormData({...formData, neverReceivedHike: !formData.neverReceivedHike})}
+                                    onClick={() => handleFieldChange('neverReceivedHike', !formData.neverReceivedHike)}
                                 >
                                     <input 
                                         type="checkbox"
                                         checked={formData.neverReceivedHike}
-                                        onChange={(e) => setFormData({...formData, neverReceivedHike: e.target.checked})}
+                                        onChange={(e) => handleFieldChange('neverReceivedHike', e.target.checked)}
                                         onClick={(e) => e.stopPropagation()}
                                     />
                                     <label className="checkbox-label">
                                         I have never received a salary hike
                                     </label>
                                 </div>
+                                {errors.lastHikeDate && <div className="field-error">{errors.lastHikeDate}</div>}
                             </div>
 
                             <div className="form-group">
                                 <label>Company Type</label>
                                 <select 
                                     value={formData.companyType}
-                                    onChange={(e) => setFormData({...formData, companyType: e.target.value})}
+                                    onChange={(e) => handleFieldChange('companyType', e.target.value)}
+                                    onBlur={() => handleFieldBlur('companyType')}
+                                    className={errors.companyType ? 'input-invalid' : ''}
                                 >
                                     <option value="" disabled>Select company type</option>
                                     {COMPANY_TYPES.map(type => (
                                         <option key={type} value={type}>{type}</option>
                                     ))}
                                 </select>
+                                {errors.companyType && <div className="field-error">{errors.companyType}</div>}
                             </div>
                         </div>
 
                         <div className="form-group" style={{marginBottom: '2rem'}}>
                             <label>Your Skills (Select all that apply)</label>
-                            <div className="skills-panel">
+                            <div className={`skills-panel ${errors.skills ? 'input-invalid' : ''}`}>
                                 <div className="skills-toolbar-simple">
                                     <select
                                         value={skillCategory}
@@ -2769,7 +3038,13 @@
                                     <button
                                         type="button"
                                         className="btn-skill-clear"
-                                        onClick={() => setFormData({ ...formData, skills: [] })}
+                                        onClick={() => {
+                                            setFormData({ ...formData, skills: [] });
+                                            setErrors((prev) => ({
+                                                ...prev,
+                                                skills: 'Please select at least one skill.'
+                                            }));
+                                        }}
                                     >
                                         Clear Skills
                                     </button>
@@ -2793,6 +3068,7 @@
                                     )}
                                 </div>
                             </div>
+                            {errors.skills && <div className="field-error">{errors.skills}</div>}
                         </div>
 
                         <button type="submit" className="btn-primary">
